@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Skeleton\Tests;
+namespace Mateusjatenee\MagicTest\Tests;
 
 class ExampleTest extends TestCase
 {

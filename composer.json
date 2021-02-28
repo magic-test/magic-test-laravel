@@ -1,21 +1,21 @@
 {
-    "name": ":vendor_name/:package_name",
-    "description": ":package_description",
+    "name": "mateusjatenee/magic-test-laravel",
+    "description": "Use Magic Test with Laravel",
     "keywords": [
-        ":vendor_name",
-        ":package_name"
+        "mateusjatenee",
+        "magic-test-laravel"
     ],
-    "homepage": "https://github.com/:vendor_name/:package_name",
+    "homepage": "https://github.com/mateusjatenee/magic-test-laravel",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": ":author_email",
+            "name": "Mateus Guimarães",
+            "email": "mateus.jatene@gmail.com",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^7.1",
         "spatie/laravel-package-tools": "^1.1",
         "illuminate/contracts": "^8.0"
     },
@@ -27,13 +27,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\Skeleton\\": "src",
-            "Spatie\\Skeleton\\Database\\Factories\\": "database/factories"
+            "Mateusjatenee\\MagicTest\\": "src",
+            "Mateusjatenee\\MagicTest\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\Skeleton\\Tests\\": "tests"
+            "Mateusjatenee\\MagicTest\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -47,10 +47,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Spatie\\Skeleton\\SkeletonServiceProvider"
+                "Mateusjatenee\\MagicTest\\MagicTestServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "Spatie\\Skeleton\\SkeletonFacade"
+                "MagicTest": "Mateusjatenee\\MagicTest\\MagicTestFacade"
             }
         }
     },

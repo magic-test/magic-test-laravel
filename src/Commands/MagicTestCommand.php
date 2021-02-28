@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\Skeleton\Commands;
+namespace Mateusjatenee\MagicTest\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class MagicTestCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'magic-test-laravel';
 
     public $description = 'My command';
 
