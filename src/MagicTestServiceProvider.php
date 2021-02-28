@@ -36,6 +36,10 @@ class MagicTestServiceProvider extends PackageServiceProvider
 
     protected function registerRoutes()
     {
+        if (MagicTest::running()) {
+            return;
+        }
+
         app('router')->post('/magic-test', MagicTestController::class);
     }
 }

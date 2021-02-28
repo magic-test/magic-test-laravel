@@ -4,9 +4,14 @@ namespace Mateusjatenee\MagicTest;
 
 class MagicTest
 {
+    public static function running(): bool
+    {
+        return config('magic-test-laravel')['running'] === true;
+    }
+    
     public static function scripts(): string
     {
-        $script = file_get_contents(__DIR__ . '../dist/magic_test.js');
+        $script = file_get_contents(__DIR__ . '/../js/magic_test.js');
 
         // HTML Label.
         $html = ['<!-- Magic Test Scripts -->'];
