@@ -2,9 +2,11 @@
 
 namespace Mateusjatenee\MagicTest;
 
+use Illuminate\Support\Facades\Blade;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Mateusjatenee\MagicTest\Commands\MagicTestCommand;
+use Mateusjatenee\MagicTest\Controllers\MagicTestController;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class MagicTestServiceProvider extends PackageServiceProvider
 {
@@ -21,5 +23,19 @@ class MagicTestServiceProvider extends PackageServiceProvider
             ->hasViews()
             ->hasMigration('create_magic_test_laravel_table')
             ->hasCommand(MagicTestCommand::class);
+    }
+
+    public function boot() 
+    {
+        parent::boot();
+
+        $this->registerRoutes();
+
+        Blade::directive('magicTestScripts', [MagicTest::class, 'scripts']);
+    }
+
+    protected function registerRoutes()
+    {
+        app('router')->post('/magic-test', MagicTestController::class);
     }
 }
