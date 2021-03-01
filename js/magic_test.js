@@ -53,9 +53,50 @@ function clickFunction(event) {
         options: options,
         classList: classList,
         tag: tagName.toLowerCase(),
-
     });
 }
+
+  function keypressFunction(evt) {
+      evt = evt || window.event;
+      var charCode = evt.keyCode || evt.which;
+      var name = evt.target.name;
+      var tagName = '';
+      var classList = '';
+      var charStr = String.fromCharCode(charCode);
+      if (!evt.target.labels) {
+          return;
+      }
+      var label = evt.target.labels[0].textContent;
+      var text = (evt.target.value + charStr).trim().replace("'", "\\'");
+      var target = evt.target.labels[0].textContent;
+      var options = {"text": `'${text}'` };
+      var action = 'fill';
+      var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
+      var lastAction = testingOutput[testingOutput.length - 1];
+      if (
+          lastAction &&
+          lastAction.action == action &&
+          lastAction.target == "'" + name + "'"
+      ) {
+          lastAction.options = options;
+      } else {
+          testingOutput.push({
+              action: action,
+              path: '',
+              target: `'${name}'`,
+              options: options,
+              classList: classList,
+              tag: tagName.toLowerCase()
+          });
+      }
+      sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
+  }
+
+
+
+  document.addEventListener("keypress", function (e) {
+      keypressFunction(e);
+  });
 
 $(document).on("click", "*", function (event) {
     clickFunction(event);
