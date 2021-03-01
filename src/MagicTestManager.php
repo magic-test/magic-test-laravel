@@ -58,7 +58,6 @@ class MagicTestManager
         // When it only has a visits call
         if (
             Str::endsWith(preg_replace('~(\v|\t|\s{2,})~m', '', $toReplace), '});')) {
-
             $prependNewTest = "\n" . Grammar::indent('$browser');
             $test = ";\n" . $prependNewTest . $test;
             $toReplace = ');';

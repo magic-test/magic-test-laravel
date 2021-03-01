@@ -31,7 +31,7 @@ class Grammar
     public static function indent(string $string, int $times = 2): string
     {
         $indentation = '';
-        foreach(range(0, $times) as $i) {
+        foreach (range(0, $times) as $i) {
             $indentation .= self::INDENT;
         }
 
