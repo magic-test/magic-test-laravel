@@ -41,7 +41,7 @@
             "Mateusjatenee\\MagicTest\\Tests\\": "tests"
         },
         "files": [
-            "app/helpers.php"
+            "src/helpers.php"
         ]
     },
     "scripts": {

@@ -4,51 +4,70 @@ namespace Mateusjatenee\MagicTest;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Mateusjatenee\MagicTest\Grammar\Grammar;
 
 class FileEditor
 {
+    protected static $writingTests = false;
+
     public function process(string $content, Collection $grammar, string $method): string
     {
         $arrayContent = explode("\n", $content);
 
-        $after = strtok(Str::of($content)
-            ->after($method)
-            ->after('$browser->')
-            ->before("});\n"), "\n");
+        $firstAction = strtok(
+            Str::of($content)
+                ->after($method)
+                ->after('$browser->')
+                ->before("});\n")
+                ->__toString(),
+            "\n"
+        );
 
+        $newTestContent = collect([]);
 
-        $writingStarted = false;
-        $newText = [];
-
-        foreach ($arrayContent as $key => $subContent) {
-            if (Str::contains(trim($subContent), trim($after))) {
-                $writingStarted = true;
-                $newText[] = Str::replaceLast(";", "", $subContent);
-
-                foreach ($grammar as $grammarKey => $g) {
-                    $isLast = ($grammarKey + 1) === $grammar->count();
-                    $newText[] = $g->build() . ($isLast ? ';' : '');
-                }
-
+        foreach ($arrayContent as $key => $line) {
+            if ($this->isTestFirstAction($line, $firstAction)) {
+                self::$writingTests = true;
+                $newTestContent[] = Str::replaceLast(";", "", $line);
+                $newTestContent[] = $this->buildGrammar($grammar);
 
                 if (empty($arrayContent[$key + 1])) {
-                    $writingStarted = false;
+                    self::$writingTests = false;
                 }
-            } else {
-                if ($writingStarted) {
-                    if (Str::endsWith(trim($subContent), ';')) {
-                        $writingStarted = false;
 
-                        continue;
-                    } else {
-                        continue;
-                    }
-                }
-                $newText[] = $subContent;
+                continue;
             }
+            
+            if (self::$writingTests) {
+                // if we are still writing tests but the line ends with a ;, then we stop "writing tests" and skipping lines.
+                if (Str::endsWith(trim($line), ';')) {
+                    self::$writingTests = false;
+
+                    continue;
+                } else {
+                    // if we are still writing tests, it means this line is from the original file/previous test.
+                    continue;
+                }
+            }
+
+            // push the remaining lines.
+            $newTestContent[] = $line;
         }
 
+        return $newTestContent->flatten()->implode("\n");
+    }
 
-        return implode("\n", $newText);
+    protected function isTestFirstAction(string $line, string $firstAction): bool
+    {
+        return Str::contains(trim($line), trim($firstAction));
+    }
+
+    protected function buildGrammar(Collection $grammars): Collection
+    {
+        return $grammars->map(function (Grammar $grammar) use ($grammars) {
+            $isLast = $grammar === $grammars->last();
+            
+            return $grammar->build() . ($isLast ? ';' : '');
+        });
     }
 }
