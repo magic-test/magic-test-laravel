@@ -9,14 +9,13 @@ class FileEditor
 {
     public function process(string $content, $grammar, string $method)
     {
-
         $arrayContent = explode("\n", $content);
 
 
         $test = "\n";
 
 
-         $after = Str::of($content)
+        $after = Str::of($content)
             ->after($method)
             ->after('$browser->')
             ->before("});\n");
@@ -42,11 +41,11 @@ class FileEditor
                 if (trim($arrayContent[$key + 1]) == "") {
                     $started = false;
                 }
-
             } else {
                 if ($started) {
                     if (Str::endsWith(trim($subContent), ';')) {
                         $started = false;
+
                         continue;
                     } else {
                         continue;
