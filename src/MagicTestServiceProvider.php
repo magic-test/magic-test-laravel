@@ -29,7 +29,8 @@ class MagicTestServiceProvider extends PackageServiceProvider
     {
         parent::boot();
 
-        $this->registerRoutes();
+
+        $this->app->singleton('magic-test-laravel', fn($app) => new MagicTest);
 
         Blade::directive('magicTestScripts', [MagicTest::class, 'scripts']);
     }

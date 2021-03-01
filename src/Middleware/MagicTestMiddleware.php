@@ -17,9 +17,6 @@ class MagicTestMiddleware
         if ($head = mb_strpos($content, '</body>') !== false) {
             $scripts = MagicTest::scripts();
             $response->setContent($content . "\n $scripts");
-        //    $response->setContent(
-        //        mb_substr($content, 0, $head) . "\n ao" . mb_substr($content, $head)
-        //    ); 
         }
 
         return $response;
