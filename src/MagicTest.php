@@ -43,7 +43,7 @@ class MagicTest
     
     public static function scripts(): string
     {
-        $script = file_get_contents(__DIR__ . '/../js/magic_test.js');
+        $script = file_get_contents(__DIR__ . '/../dist/magic_test.js');
 
         // HTML Label.
         $html = ['<!-- Magic Test Scripts -->'];

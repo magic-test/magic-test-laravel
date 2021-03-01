@@ -1,11 +1,11 @@
 {
-    "name": "mateusjatenee/magic-test-laravel",
+    "name": "magic-test/magic-test-laravel",
     "description": "Use Magic Test with Laravel",
     "keywords": [
         "mateusjatenee",
         "magic-test-laravel"
     ],
-    "homepage": "https://github.com/mateusjatenee/magic-test-laravel",
+    "homepage": "https://github.com/magic-test/magic-test-laravel",
     "license": "MIT",
     "authors": [
         {
