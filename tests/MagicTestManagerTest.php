@@ -42,11 +42,10 @@ class MagicTestManagerTest extends TestCase
         $input = file_get_contents(MagicTest::$file);
 
         $grammar = collect([
-            new Click('click', '', "'Log in'", [], [], 'a'),
-            new Click('click', '', "'Forgot your password?'", [], [], 'a'),
-            new See('see', '', "'Mateus'", [], [], 'span'),
+            new Click('', "'Log in'", [], [], 'a'),
+            new Click('', "'Forgot your password?'", [], [], 'a'),
+            new See('', "'Mateus'", [], [], 'span'),
         ]);
-
 
         (new MagicTestManager)->buildTest($grammar);
 
@@ -66,9 +65,9 @@ class MagicTestManagerTest extends TestCase
         $input = file_get_contents(MagicTest::$file);
 
         $grammar = collect([
-            new Click('click', '', "'Log in'", [], [], 'a'),
-            new Click('click', '', "'Forgot your password?'", [], [], 'a'),
-            new See('see', '', "'Mateus'", [], [], 'span'),
+            new Click('', "'Log in'", [], [], 'a'),
+            new Click('', "'Forgot your password?'", [], [], 'a'),
+            new See('', "'Mateus'", [], [], 'span'),
         ]);
 
 

@@ -20,7 +20,7 @@ class MagicTestManager
         eval(\Psy\sh());
     }
 
-    public function runScripts()
+    public function runScripts(): void
     {
         $browser = MagicTest::$browser;
 
@@ -30,7 +30,7 @@ class MagicTestManager
         $this->buildTest($grammar);
     }
 
-    public function buildTest(Collection $grammar)
+    public function buildTest(Collection $grammar): void
     {
         $content = file_get_contents(MagicTest::$file);
         $method = MagicTest::$method;

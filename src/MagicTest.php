@@ -12,17 +12,17 @@ class MagicTest
 
     public static $method;
 
-    public static function setBrowserInstance(Browser $browser)
+    public static function setBrowserInstance(Browser $browser): void
     {
         self::$browser = $browser;
     }
 
-    public static function setOpenFile(string $file)
+    public static function setOpenFile(string $file): void
     {
         self::$file = $file;
     }
 
-    public static function setTestMethod(string $method)
+    public static function setTestMethod(string $method): void
     {
         self::$method = $method;
     }
@@ -32,7 +32,7 @@ class MagicTest
         return config('magic-test-laravel')['running'] === true;
     }
 
-    public function ok()
+    public function ok(): void
     {
         app(MagicTestManager::class)->runScripts();
     }
@@ -56,7 +56,7 @@ class MagicTest
         return implode("\n", $html);
     }
 
-    protected function minify($subject): string
+    protected function minify(string $subject): string
     {
         return preg_replace('~(\v|\t|\s{2,})~m', '', $subject);
     }

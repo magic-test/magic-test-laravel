@@ -3,11 +3,12 @@
 namespace Mateusjatenee\MagicTest;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use Mateusjatenee\MagicTest\Grammar\Grammar;
 
 class FileEditor
 {
-    public function process(string $content, $grammar, string $method)
+    public function process(string $content, Collection $grammar, string $method): string
     {
         $arrayContent = explode("\n", $content);
 
@@ -15,7 +16,6 @@ class FileEditor
             ->after($method)
             ->after('$browser->')
             ->before("});\n"), "\n");
-
 
 
         $writingStarted = false;

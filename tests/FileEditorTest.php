@@ -16,9 +16,9 @@ class FileEditorTest extends TestCase
         
 
         $grammar = collect([
-            new Click('click', '', "'Log in'", [], [], 'a'),
-            new Click('click', '', "'Forgot your password?'", [], [], 'a'),
-            new See('see', '', "'Mateus'", [], [], 'span'),
+            new Click('', "'Log in'", [], [], 'a'),
+            new Click('', "'Forgot your password?'", [], [], 'a'),
+            new See('', "'Mateus'", [], [], 'span'),
         ]);
 
         $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
@@ -34,9 +34,9 @@ class FileEditorTest extends TestCase
         
 
         $grammar = collect([
-            new Click('click', '', "'Log in'", [], [], 'a'),
-            new Click('click', '', "'Forgot your password?'", [], [], 'a'),
-            new See('see', '', "'Mateus'", [], [], 'span'),
+            new Click('', "'Log in'", [], [], 'a'),
+            new Click('', "'Forgot your password?'", [], [], 'a'),
+            new See('', "'Mateus'", [], [], 'span'),
         ]);
 
         $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');

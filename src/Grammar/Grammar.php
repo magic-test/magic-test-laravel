@@ -4,8 +4,6 @@ namespace Mateusjatenee\MagicTest\Grammar;
 
 class Grammar
 {
-    public $action;
-
     public $path;
 
     public $target;
@@ -18,9 +16,8 @@ class Grammar
 
     const INDENT = '    ';
 
-    public function __construct($action, $path, $target, $options, $classList, $tag)
+    public function __construct($path, $target, $options, $classList, $tag)
     {
-        $this->action = $action;
         $this->path = $path;
         $this->target = $target;
         $this->options = $options;
@@ -40,13 +37,7 @@ class Grammar
 
     public function build(bool $last = false)
     {
-        $string = '                    ';
-        $string .= $this->action();
-        if ($last) {
-            $string .= ";";
-        }
-
-        return $string;
+        return self::indent($this->action(), 4) . ($last ? ';' : '');
     }
 
     public static function for(array $command)
