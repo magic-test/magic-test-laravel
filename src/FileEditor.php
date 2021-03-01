@@ -11,17 +11,12 @@ class FileEditor
     {
         $arrayContent = explode("\n", $content);
 
-
-        $test = "\n";
-
-
-         $after = Str::of($content)
+         $after = strtok(Str::of($content)
             ->after($method)
             ->after('$browser->')
-            ->before("});\n");
+            ->before("});\n"), "\n");
 
-        $after = explode("\n", $after)[0];
-
+        dd($after);
 
         $started = false;
         $newText = [];
