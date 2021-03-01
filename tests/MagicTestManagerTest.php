@@ -15,7 +15,7 @@ class MagicTestManagerTest extends TestCase
 
         $this->testFilePaths = [
             __DIR__ . '/fixtures/ExampleTest.example',
-            __DIR__ . '/fixtures/ExampleTestWithContent.example'
+            __DIR__ . '/fixtures/ExampleTestWithContent.example',
         ];
 
         $this->originalContents = [
@@ -44,7 +44,7 @@ class MagicTestManagerTest extends TestCase
         $grammar = collect([
             new Click('click', '', "'Log in'", [], [], 'a'),
             new Click('click', '', "'Forgot your password?'", [], [], 'a'),
-            new See('see', '', "'Mateus'", [], [], 'span')
+            new See('see', '', "'Mateus'", [], [], 'span'),
         ]);
 
 
