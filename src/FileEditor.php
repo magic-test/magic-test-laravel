@@ -11,7 +11,7 @@ class FileEditor
     {
         $arrayContent = explode("\n", $content);
 
-         $after = strtok(Str::of($content)
+        $after = strtok(Str::of($content)
             ->after($method)
             ->after('$browser->')
             ->before("});\n"), "\n");

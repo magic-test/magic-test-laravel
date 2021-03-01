@@ -3,7 +3,6 @@
 namespace Mateusjatenee\MagicTest;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Mateusjatenee\MagicTest\Grammar\Grammar;
 
 class MagicTestManager
@@ -36,7 +35,7 @@ class MagicTestManager
         $method = MagicTest::$method;
         
         file_put_contents(
-            MagicTest::$file, 
+            MagicTest::$file,
             (new FileEditor)->process($content, $grammar, $method)
         );
     }
