@@ -16,30 +16,29 @@ class FileEditor
             ->after('$browser->')
             ->before("});\n"), "\n");
 
-        dd($after);
 
-        $started = false;
+
+        $writingStarted = false;
         $newText = [];
 
         foreach ($arrayContent as $key => $subContent) {
             if (Str::contains(trim($subContent), trim($after))) {
-                $started = true;
+                $writingStarted = true;
                 $newText[] = Str::replaceLast(";", "", $subContent);
+
                 foreach ($grammar as $grammarKey => $g) {
-                    $isLast = ($grammarKey + 1) == $grammar->count();
-                    $test = $g->build($isLast);
-                    $newText[] = $test;
+                    $isLast = ($grammarKey + 1) === $grammar->count();
+                    $newText[] = $g->build() . ($isLast ? ';' : '');
                 }
 
 
-
-                if (trim($arrayContent[$key + 1]) == "") {
-                    $started = false;
+                if (empty($arrayContent[$key + 1])) {
+                    $writingStarted = false;
                 }
             } else {
-                if ($started) {
+                if ($writingStarted) {
                     if (Str::endsWith(trim($subContent), ';')) {
-                        $started = false;
+                        $writingStarted = false;
 
                         continue;
                     } else {
@@ -52,27 +51,5 @@ class FileEditor
 
 
         return implode("\n", $newText);
-
-        $matches = [];
-
-        $toReplace = (string) Str::of($content)
-            ->after($method)
-            ->after($after)
-            ->before(');') . ');';
-
-        // When it only has a visits call
-        if (
-            Str::endsWith(preg_replace('~(\v|\t|\s{2,})~m', '', $toReplace), '});')) {
-            $prependNewTest = "\n" . Grammar::indent('$browser');
-            $test = ";\n" . $prependNewTest . $test;
-            $toReplace = ');';
-        }
-
-
-
-
-        $newContent = Str::replaceFirst($toReplace, $test, $content);
-
-        return $newContent;
     }
 }
