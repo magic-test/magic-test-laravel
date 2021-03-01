@@ -2,8 +2,8 @@
 
 namespace Mateusjatenee\MagicTest;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Mateusjatenee\MagicTest\Grammar\Grammar;
 
 class MagicTestManager
@@ -36,7 +36,7 @@ class MagicTestManager
 
         foreach ($grammar as $key => $g) {
             $isLast = ($key + 1) == $grammar->count();
-            $test.= $g->build($isLast) . ($isLast ? '' : "\n");
+            $test .= $g->build($isLast) . ($isLast ? '' : "\n");
         }
         
         $file = file_get_contents(MagicTest::$file);
