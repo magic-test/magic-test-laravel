@@ -2,9 +2,8 @@
 
 namespace Mateusjatenee\MagicTest;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use Mateusjatenee\MagicTest\Grammar\Grammar;
+use Illuminate\Support\Str;
 
 class FileEditor
 {
