@@ -2,6 +2,7 @@
 
 namespace Mateusjatenee\MagicTest;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Mateusjatenee\MagicTest\Grammar\Grammar;
 
@@ -32,15 +33,29 @@ class MagicTestManager
 
     public function buildTest(Collection $grammar)
     {
-        $test = '';
+        $test = "\n";
 
         foreach ($grammar as $key => $g) {
             $isLast = ($key + 1) == $grammar->count();
-            $test.= $g->build($isLast) . "\n";
+            $test.= $g->build($isLast) . ($isLast ? '' : "\n");
         }
-
         $file = file_get_contents(MagicTest::$file);
-        dd($file);
+
+        $after = Str::of($file)
+            ->after(MagicTest::$method)
+            ->after('$browser->')
+            ->before("\n");
+
+
+        $toReplace = (string) Str::of($file)
+            ->after(MagicTest::$method)
+            ->after($after)
+            ->before(');') . ');';
+
+        $newContent = Str::replaceFirst($toReplace, $test, $file);
+
+        
+        file_put_contents(MagicTest::$file, $newContent);
 
         // $content = preg_replace((?<=visit\(\'/.'*)(.*)(?=;), $test, $file);
         // dd($content);
