@@ -5,8 +5,6 @@ namespace Mateusjatenee\MagicTest\Tests;
 use Mateusjatenee\MagicTest\FileEditor;
 use Mateusjatenee\MagicTest\Grammar\Click;
 use Mateusjatenee\MagicTest\Grammar\See;
-use Mateusjatenee\MagicTest\MagicTest;
-use Mateusjatenee\MagicTest\MagicTestManager;
 
 class FileEditorTest extends TestCase
 {

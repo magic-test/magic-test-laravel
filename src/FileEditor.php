@@ -36,11 +36,11 @@ class FileEditor
                 if (trim($arrayContent[$key + 1]) == "") {
                     $started = false;
                 }
-
             } else {
                 if ($started) {
                     if (Str::endsWith(trim($subContent), ';')) {
                         $started = false;
+
                         continue;
                     } else {
                         continue;
