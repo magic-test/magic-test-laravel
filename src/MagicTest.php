@@ -8,9 +8,16 @@ class MagicTest
 {
     public static $browser;
 
+    public static $file;
+
     public static function setBrowserInstance(Browser $browser)
     {
         self::$browser = $browser;
+    }
+
+    public static function setOpenFile(string $file)
+    {
+        self::$file = $file;
     }
 
     public static function running(): bool

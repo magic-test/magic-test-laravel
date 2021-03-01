@@ -11,6 +11,9 @@ class MagicTestManager
     {
         MagicTest::setBrowserInstance($browser);
 
+        $testFile = debug_backtrace()[2]['file'];
+        MagicTest::setOpenFile($testFile);
+
         eval(\Psy\sh());;
     }
 
@@ -34,6 +37,10 @@ class MagicTestManager
             $test.= $g->build($isLast) . "\n";
         }
 
-        dd($test);
+        $file = file_get_contents(MagicTest::$file);
+
+        $content = preg_replace((?<=visit\(\'/.'*)(.*)(?=;), $test, $file);
+        dd($content);
+        // $regex = /.+?(?=abc)/;
     }
 }

@@ -45,8 +45,8 @@ function clickFunction(event) {
     } else {
         return;
     }
-    var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
-    testingOutput.push({
+
+    MagicTest.addData({
         action: action,
         path: path,
         target: target,
@@ -55,7 +55,6 @@ function clickFunction(event) {
         tag: tagName.toLowerCase(),
 
     });
-    sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
 }
 
 $(document).on("click", "*", function (event) {
@@ -66,4 +65,11 @@ window.MagicTest = {
     getData() {
         return sessionStorage.getItem("testingOutput") || {};
     },
+    addData(data) {
+      let testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
+
+      testingOutput.push(data);
+      
+      sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
+    }
 };
