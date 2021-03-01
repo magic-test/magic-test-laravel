@@ -2,9 +2,6 @@
 
 namespace Mateusjatenee\MagicTest\Grammar;
 
-use Mateusjatenee\MagicTest\Grammar\See;
-use Mateusjatenee\MagicTest\Grammar\Fill;
-
 class Grammar
 {
     public $path;
@@ -53,13 +50,13 @@ class Grammar
         $types = [
             'click' => Click::class,
             'see' => See::class,
-            'fill' => Fill::class
+            'fill' => Fill::class,
         ];
 
         return new $types[$command['action']](
-            $command['path'], 
-            $command['target'], 
-            $command['options'], 
+            $command['path'],
+            $command['target'],
+            $command['options'],
             $command['classList'],
             $command['tag']
         );
