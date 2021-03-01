@@ -1,6 +1,6 @@
 <?php
 
-namespace Mateusjatenee\MagicTest\Grammar;
+namespace MagicTest\MagicTest\Grammar;
 
 class Click extends Grammar
 {

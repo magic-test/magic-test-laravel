@@ -1,6 +1,6 @@
 <?php
 
-namespace Mateusjatenee\MagicTest\Controllers;
+namespace MagicTest\MagicTest\Controllers;
 
 class MagicTestController
 {

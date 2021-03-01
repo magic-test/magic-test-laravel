@@ -29,8 +29,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Mateusjatenee\\MagicTest\\": "src",
-            "Mateusjatenee\\MagicTest\\Database\\Factories\\": "database/factories"
+            "MagicTest\\MagicTest\\": "src",
+            "MagicTest\\MagicTest\\Database\\Factories\\": "database/factories"
         },
         "files": [
             "src/helpers.php"
@@ -38,7 +38,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Mateusjatenee\\MagicTest\\Tests\\": "tests"
+            "MagicTest\\MagicTest\\Tests\\": "tests"
         },
         "files": [
             "src/helpers.php"
@@ -55,10 +55,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Mateusjatenee\\MagicTest\\MagicTestServiceProvider"
+                "MagicTest\\MagicTest\\MagicTestServiceProvider"
             ],
             "aliases": {
-                "MagicTest": "Mateusjatenee\\MagicTest\\MagicTestFacade"
+                "MagicTest": "MagicTest\\MagicTest\\MagicTestFacade"
             }
         }
     },

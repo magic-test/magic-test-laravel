@@ -1,10 +1,10 @@
 <?php
 
-namespace Mateusjatenee\MagicTest\Tests;
+namespace MagicTest\MagicTest\Tests;
 
-use Mateusjatenee\MagicTest\FileEditor;
-use Mateusjatenee\MagicTest\Grammar\Click;
-use Mateusjatenee\MagicTest\Grammar\See;
+use MagicTest\MagicTest\FileEditor;
+use MagicTest\MagicTest\Grammar\Click;
+use MagicTest\MagicTest\Grammar\See;
 
 class FileEditorTest extends TestCase
 {

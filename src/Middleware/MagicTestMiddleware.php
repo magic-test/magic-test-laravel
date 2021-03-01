@@ -1,10 +1,10 @@
 <?php
 
-namespace Mateusjatenee\MagicTest\Middleware;
+namespace MagicTest\MagicTest\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Mateusjatenee\MagicTest\MagicTest;
+use MagicTest\MagicTest\MagicTest;
 
 class MagicTestMiddleware
 {

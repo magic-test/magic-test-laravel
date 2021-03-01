@@ -1,6 +1,6 @@
 <?php
 
-namespace Mateusjatenee\MagicTest\Traits;
+namespace MagicTest\MagicTest\Traits;
 
 trait UsesMagicTest
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Mateusjatenee\MagicTest;
+namespace MagicTest\MagicTest;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Mateusjatenee\MagicTest\Grammar\Grammar;
+use MagicTest\MagicTest\Grammar\Grammar;
 
 class FileEditor
 {

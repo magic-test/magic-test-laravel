@@ -4,8 +4,8 @@ namespace Tests\Browser;
 
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
-use Mateusjatenee\MagicTest\MagicTest;
-use Mateusjatenee\MagicTest\MagicTestManager;
+use MagicTest\MagicTest\MagicTest;
+use MagicTest\MagicTest\MagicTestManager;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ExampleTest extends DuskTestCase

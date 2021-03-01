@@ -1,9 +1,9 @@
 <?php
 
-namespace Mateusjatenee\MagicTest\Tests;
+namespace MagicTest\MagicTest\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Mateusjatenee\MagicTest\MagicTestServiceProvider;
+use MagicTest\MagicTest\MagicTestServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra

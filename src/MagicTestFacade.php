@@ -1,6 +1,6 @@
 <?php
 
-namespace Mateusjatenee\MagicTest;
+namespace MagicTest\MagicTest;
 
 use Illuminate\Support\Facades\Facade;
 

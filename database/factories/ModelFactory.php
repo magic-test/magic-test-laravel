@@ -1,6 +1,6 @@
 <?php
 
-namespace Mateusjatenee\MagicTest\Database\Factories;
+namespace MagicTest\MagicTest\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Mateusjatenee\MagicTest;
+namespace MagicTest\MagicTest;
 
 use Illuminate\Support\Facades\Blade;
-use Mateusjatenee\MagicTest\Commands\MagicTestCommand;
-use Mateusjatenee\MagicTest\Controllers\MagicTestController;
+use MagicTest\MagicTest\Commands\MagicTestCommand;
+use MagicTest\MagicTest\Controllers\MagicTestController;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

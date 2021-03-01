@@ -1,6 +1,6 @@
 <?php
 
-namespace Mateusjatenee\MagicTest\Tests;
+namespace MagicTest\MagicTest\Tests;
 
 class ExampleTest extends TestCase
 {

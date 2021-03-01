@@ -1,6 +1,6 @@
 <?php
 
-namespace Mateusjatenee\MagicTest\Commands;
+namespace MagicTest\MagicTest\Commands;
 
 use Illuminate\Console\Command;
 

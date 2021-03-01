@@ -1,11 +1,11 @@
 <?php
 
-namespace Mateusjatenee\MagicTest\Tests;
+namespace MagicTest\MagicTest\Tests;
 
-use Mateusjatenee\MagicTest\Grammar\Click;
-use Mateusjatenee\MagicTest\Grammar\See;
-use Mateusjatenee\MagicTest\MagicTest;
-use Mateusjatenee\MagicTest\MagicTestManager;
+use MagicTest\MagicTest\Grammar\Click;
+use MagicTest\MagicTest\Grammar\See;
+use MagicTest\MagicTest\MagicTest;
+use MagicTest\MagicTest\MagicTestManager;
 
 class MagicTestManagerTest extends TestCase
 {
