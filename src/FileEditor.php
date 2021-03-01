@@ -9,7 +9,6 @@ class FileEditor
 {
     public function process(string $content, $grammar, string $method)
     {
-
         $arrayContent = explode("\n", $content);
 
 

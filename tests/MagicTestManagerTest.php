@@ -58,7 +58,7 @@ class MagicTestManagerTest extends TestCase
     /** @test */
     public function it_replaces_the_content_of_a_file_without_actions()
     {
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestOutputNoActions.example');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestOutput.example');
 
         MagicTest::setOpenFile($this->testFilePaths[0]);
         MagicTest::setTestMethod('testBasicExample');
@@ -66,9 +66,9 @@ class MagicTestManagerTest extends TestCase
         $input = file_get_contents(MagicTest::$file);
 
         $grammar = collect([
-            new Click('click', '', 'Log in', [], [], 'a'),
-            new Click('click', '', 'Forgot your password?', [], [], 'a'),
-            new See('see', '', 'Mateus', [], [], 'span'),
+            new Click('click', '', "'Log in'", [], [], 'a'),
+            new Click('click', '', "'Forgot your password?'", [], [], 'a'),
+            new See('see', '', "'Mateus'", [], [], 'span'),
         ]);
 
 

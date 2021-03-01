@@ -32,47 +32,12 @@ class MagicTestManager
 
     public function buildTest(Collection $grammar)
     {
-        $test = "\n";
-
-        foreach ($grammar as $key => $g) {
-            $isLast = ($key + 1) == $grammar->count();
-            $test .= $g->build($isLast) . ($isLast ? '' : "\n");
-        }
+        $content = file_get_contents(MagicTest::$file);
+        $method = MagicTest::$method;
         
-        $file = file_get_contents(MagicTest::$file);
-
-        
-        $after = Str::of($file)
-            ->after(MagicTest::$method)
-            ->after('$browser->')
-            ->before("\n");
-
-
-
-
-        $toReplace = (string) Str::of($file)
-            ->after(MagicTest::$method)
-            ->after($after)
-            ->before(');') . ');';
-
-        // When it only has a visits call
-        if (
-            Str::endsWith(preg_replace('~(\v|\t|\s{2,})~m', '', $toReplace), '});')) {
-            $prependNewTest = "\n" . Grammar::indent('$browser');
-            $test = ";\n" . $prependNewTest . $test;
-            $toReplace = ');';
-        }
-
-
-
-
-        $newContent = Str::replaceFirst($toReplace, $test, $file);
-
-        
-        file_put_contents(MagicTest::$file, $newContent);
-
-        // $content = preg_replace((?<=visit\(\'/.'*)(.*)(?=;), $test, $file);
-        // dd($content);
-        // // $regex = /.+?(?=abc)/;
+        file_put_contents(
+            MagicTest::$file, 
+            (new FileEditor)->process($content, $grammar, $method)
+        );
     }
 }
