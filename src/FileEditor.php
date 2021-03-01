@@ -10,6 +10,14 @@ class FileEditor
 {
     protected static $writingTests = false;
 
+    /**
+     * Overwrites the current browser operations on a given content with new ones based on the given Grammar.
+     *
+     * @param string $content
+     * @param \Illuminate\Support\Collection $grammar
+     * @param string $method
+     * @return string
+     */
     public function process(string $content, Collection $grammar, string $method): string
     {
         $arrayContent = explode("\n", $content);
@@ -37,7 +45,7 @@ class FileEditor
 
                 continue;
             }
-            
+
             if (self::$writingTests) {
                 // if we are still writing tests but the line ends with a ;, then we stop "writing tests" and skipping lines.
                 if (Str::endsWith(trim($line), ';')) {
