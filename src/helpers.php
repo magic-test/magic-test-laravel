@@ -3,7 +3,6 @@
 use Mateusjatenee\MagicTest\MagicTest;
 use Mateusjatenee\MagicTest\MagicTestManager;
 
-
 function ok()
 {
     return app('magic-test')->ok();

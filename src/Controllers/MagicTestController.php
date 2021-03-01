@@ -6,6 +6,5 @@ class MagicTestController
 {
     public function __invoke()
     {
-            
     }
 }

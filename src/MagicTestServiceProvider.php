@@ -3,9 +3,9 @@
 namespace Mateusjatenee\MagicTest;
 
 use Illuminate\Support\Facades\Blade;
-use Spatie\LaravelPackageTools\Package;
 use Mateusjatenee\MagicTest\Commands\MagicTestCommand;
 use Mateusjatenee\MagicTest\Controllers\MagicTestController;
+use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class MagicTestServiceProvider extends PackageServiceProvider
@@ -25,12 +25,12 @@ class MagicTestServiceProvider extends PackageServiceProvider
             ->hasCommand(MagicTestCommand::class);
     }
 
-    public function boot() 
+    public function boot()
     {
         parent::boot();
 
 
-        $this->app->singleton('magic-test-laravel', fn($app) => new MagicTest);
+        $this->app->singleton('magic-test-laravel', fn ($app) => new MagicTest);
 
         Blade::directive('magicTestScripts', [MagicTest::class, 'scripts']);
     }

@@ -37,11 +37,10 @@ class Grammar
         return $string;
     }
 
-
     public static function for(array $command)
     {
         $types = [
-            'click' => Click::class
+            'click' => Click::class,
         ];
 
         return new $types[$command['action']](...array_values($command));
