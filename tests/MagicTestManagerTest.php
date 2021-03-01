@@ -2,9 +2,9 @@
 
 namespace Mateusjatenee\MagicTest\Tests;
 
-use Mateusjatenee\MagicTest\MagicTest;
-use Mateusjatenee\MagicTest\Grammar\See;
 use Mateusjatenee\MagicTest\Grammar\Click;
+use Mateusjatenee\MagicTest\Grammar\See;
+use Mateusjatenee\MagicTest\MagicTest;
 use Mateusjatenee\MagicTest\MagicTestManager;
 
 class MagicTestManagerTest extends TestCase
@@ -35,7 +35,7 @@ class MagicTestManagerTest extends TestCase
         $grammar = collect([
             new Click('click', '', 'Log in', [], [], 'a'),
             new Click('click', '', 'Forgot your password?', [], [], 'a'),
-            new See('see', '', 'Mateus', [], [], 'span')
+            new See('see', '', 'Mateus', [], [], 'span'),
         ]);
 
 
