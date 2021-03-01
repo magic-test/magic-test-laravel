@@ -34,7 +34,7 @@ class MagicTest
 
     public function ok()
     {
-        return app(MagicTestManager::class)->runScripts();
+        app(MagicTestManager::class)->runScripts();
     }
 
     public function flush()
