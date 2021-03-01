@@ -18,7 +18,6 @@ class MagicTestManager
         MagicTest::setOpenFile($caller['file']);
 
         eval(\Psy\sh());
-        ;
     }
 
     public function runScripts()
@@ -28,8 +27,7 @@ class MagicTestManager
         $output = json_decode($browser->driver->executeScript('return MagicTest.getData()'), true);
         $grammar = collect($output)->map(fn ($command) => Grammar::for($command));
 
-        $test = $this->buildTest($grammar);
-        dd($test);
+        $this->buildTest($grammar);
     }
 
     public function buildTest(Collection $grammar)
@@ -43,16 +41,31 @@ class MagicTestManager
         
         $file = file_get_contents(MagicTest::$file);
 
+        
         $after = Str::of($file)
             ->after(MagicTest::$method)
             ->after('$browser->')
             ->before("\n");
 
 
+
+
         $toReplace = (string) Str::of($file)
             ->after(MagicTest::$method)
             ->after($after)
             ->before(');') . ');';
+
+        // When it only has a visits call
+        if (
+            Str::endsWith(preg_replace('~(\v|\t|\s{2,})~m', '', $toReplace), '});')) {
+
+            $prependNewTest = "\n" . Grammar::indent('$browser');
+            $test = ";\n" . $prependNewTest . $test;
+            $toReplace = ');';
+        }
+
+
+
 
         $newContent = Str::replaceFirst($toReplace, $test, $file);
 

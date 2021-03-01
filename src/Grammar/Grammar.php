@@ -16,6 +16,8 @@ class Grammar
 
     public $tag;
 
+    const INDENT = '    ';
+
     public function __construct($action, $path, $target, $options, $classList, $tag)
     {
         $this->action = $action;
@@ -24,6 +26,16 @@ class Grammar
         $this->options = $options;
         $this->classList = $classList;
         $this->tag = $tag;
+    }
+
+    public static function indent(string $string, int $times = 2): string
+    {
+        $indentation = '';
+        foreach(range(0, $times) as $i) {
+            $indentation .= self::INDENT;
+        }
+
+        return $indentation . $string;
     }
 
     public function build(bool $last = false)

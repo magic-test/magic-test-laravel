@@ -6,6 +6,6 @@ class See extends Grammar
 {
     public function action(): string
     {
-        return "->assertSee('{$this->target}')";
+        return "->assertSee({$this->target})";
     }
 }
