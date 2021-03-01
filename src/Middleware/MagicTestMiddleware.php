@@ -2,8 +2,8 @@
 
 namespace Mateusjatenee\MagicTest\Middleware;
 
-use Illuminate\Http\Request;
 use Closure;
+use Illuminate\Http\Request;
 use Mateusjatenee\MagicTest\MagicTest;
 
 class MagicTestMiddleware

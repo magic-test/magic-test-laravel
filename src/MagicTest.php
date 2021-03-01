@@ -39,7 +39,6 @@ class MagicTest
 
     public function flush()
     {
-        
     }
     
     public static function scripts(): string

@@ -3,12 +3,11 @@
 use Mateusjatenee\MagicTest\MagicTest;
 use Mateusjatenee\MagicTest\MagicTestManager;
 
-
 if (! function_exists('ok')) {
-function ok()
-{
-    return app('magic-test')->ok();
-}
+    function ok()
+    {
+        return app('magic-test')->ok();
+    }
 }
 
 

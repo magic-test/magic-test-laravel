@@ -3,8 +3,8 @@
 namespace Mateusjatenee\MagicTest\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Mateusjatenee\MagicTest\MagicTestServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
