@@ -10,6 +10,8 @@ class MagicTest
 
     public static $file;
 
+    public static $method;
+
     public static function setBrowserInstance(Browser $browser)
     {
         self::$browser = $browser;
@@ -18,6 +20,11 @@ class MagicTest
     public static function setOpenFile(string $file)
     {
         self::$file = $file;
+    }
+
+    public static function setTestMethod(string $method)
+    {
+        self::$method = $method;
     }
 
     public static function running(): bool

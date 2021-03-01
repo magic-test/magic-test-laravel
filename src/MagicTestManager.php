@@ -9,10 +9,12 @@ class MagicTestManager
 {
     public static function run($browser)
     {
+        $backtrace = debug_backtrace();
+        $caller = array_shift($backtrace);
+        $testMethod = $backtrace[3]['function'];
         MagicTest::setBrowserInstance($browser);
-
-        $testFile = debug_backtrace()[2]['file'];
-        MagicTest::setOpenFile($testFile);
+        MagicTest::setTestMethod($testMethod);
+        MagicTest::setOpenFile($caller['file']);
 
         eval(\Psy\sh());;
     }
@@ -38,9 +40,10 @@ class MagicTestManager
         }
 
         $file = file_get_contents(MagicTest::$file);
+        dd($file);
 
-        $content = preg_replace((?<=visit\(\'/.'*)(.*)(?=;), $test, $file);
-        dd($content);
-        // $regex = /.+?(?=abc)/;
+        // $content = preg_replace((?<=visit\(\'/.'*)(.*)(?=;), $test, $file);
+        // dd($content);
+        // // $regex = /.+?(?=abc)/;
     }
 }
