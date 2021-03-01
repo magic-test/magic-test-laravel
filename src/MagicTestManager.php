@@ -16,7 +16,8 @@ class MagicTestManager
         MagicTest::setTestMethod($testMethod);
         MagicTest::setOpenFile($caller['file']);
 
-        eval(\Psy\sh());;
+        eval(\Psy\sh());
+        ;
     }
 
     public function runScripts()
@@ -24,7 +25,7 @@ class MagicTestManager
         $browser = MagicTest::$browser;
 
         $output = json_decode($browser->driver->executeScript('return MagicTest.getData()'), true);
-        $grammar = collect($output)->map(fn($command) => Grammar::for($command));
+        $grammar = collect($output)->map(fn ($command) => Grammar::for($command));
 
         $test = $this->buildTest($grammar);
         dd($test);
@@ -36,7 +37,7 @@ class MagicTestManager
 
         foreach ($grammar as $key => $g) {
             $isLast = ($key + 1) == $grammar->count();
-            $test.= $g->build($isLast) . "\n";
+            $test .= $g->build($isLast) . "\n";
         }
 
         $file = file_get_contents(MagicTest::$file);
