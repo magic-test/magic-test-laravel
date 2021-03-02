@@ -366,9 +366,11 @@ $(function () {
   initializeStorage();
 });
 window.MagicTest = {
-  running: false,
   start: function start() {
-    this.running = true;
+    if (!this.running()) {
+      return;
+    }
+
     document.addEventListener("keypress", _Events_Keypress__WEBPACK_IMPORTED_MODULE_1__.default);
     document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationStart, true);
     document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationEnd, false);
@@ -376,8 +378,14 @@ window.MagicTest = {
     (0,_Context__WEBPACK_IMPORTED_MODULE_2__.enableKeyboardShortcuts)();
     (0,_Mutation__WEBPACK_IMPORTED_MODULE_3__.initializeMutationObserver)();
   },
-  stop: function stop() {
-    this.running = false;
+  run: function run() {
+    if (sessionStorage.getItem('magicTestRunning') == null) {
+      sessionStorage.setItem('magicTestRunning', true);
+      this.start();
+    }
+  },
+  running: function running() {
+    return sessionStorage.getItem('magicTestRunning') != null;
   },
   getData: function getData() {
     return sessionStorage.getItem("testingOutput") || {};
@@ -394,6 +402,9 @@ window.MagicTest = {
     sessionStorage.setItem("testingOutput", JSON.stringify([]));
   }
 };
+$(function () {
+  MagicTest.start();
+});
 })();
 
 /******/ })()

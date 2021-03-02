@@ -16,11 +16,10 @@ $(function () {
 
 
 window.MagicTest = {
-    running: false,
-
-    start()
-    {
-        this.running = true;
+    start() {
+        if (! this.running()) {
+            return;
+        }
 
         document.addEventListener("keypress", KeypressFunction);
         document.addEventListener('mouseover', mutationStart, true);
@@ -29,8 +28,14 @@ window.MagicTest = {
         enableKeyboardShortcuts();
         initializeMutationObserver();
     },
-    stop() {
-        this.running = false;
+    run() {
+        if (sessionStorage.getItem('magicTestRunning') == null) {
+            sessionStorage.setItem('magicTestRunning', true);
+            this.start();
+        }
+    },
+    running() {
+        return sessionStorage.getItem('magicTestRunning') != null;
     },
 
     getData() {
@@ -51,3 +56,7 @@ window.MagicTest = {
         sessionStorage.setItem("testingOutput", JSON.stringify([]));
     }
 };
+
+$(function() {
+    MagicTest.start();
+});
