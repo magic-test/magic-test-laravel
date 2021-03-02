@@ -2,8 +2,8 @@
 
 namespace MagicTest\MagicTest;
 
-use Laravel\Dusk\Browser;
 use Illuminate\Support\Collection;
+use Laravel\Dusk\Browser;
 use MagicTest\MagicTest\Grammar\Grammar;
 
 class MagicTestManager
