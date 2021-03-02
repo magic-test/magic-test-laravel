@@ -2,19 +2,24 @@
 
 namespace MagicTest\MagicTest;
 
+use Laravel\Dusk\Browser;
 use Illuminate\Support\Collection;
 use MagicTest\MagicTest\Grammar\Grammar;
 
 class MagicTestManager
 {
-    public static function run($browser)
+    public static function run(Browser $browser)
     {
+        $browser->script('MagicTest.run()');
+
         $backtrace = debug_backtrace();
         $caller = array_shift($backtrace);
         $testMethod = $backtrace[3]['function'];
         MagicTest::setBrowserInstance($browser);
         MagicTest::setTestMethod($testMethod);
         MagicTest::setOpenFile($caller['file']);
+
+
 
         eval(\Psy\sh());
     }

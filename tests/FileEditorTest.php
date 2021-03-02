@@ -30,11 +30,10 @@ class FileEditorTest extends TestCase
     public function it_properly_replaces_the_content_when_it_has_actions()
     {
         $expectedInput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContent.example');
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestOutput.example');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentOutput.example');
         
 
         $grammar = collect([
-            new Click('', "'Log in'", [], [], 'a'),
             new Click('', "'Forgot your password?'", [], [], 'a'),
             new See('', "'Mateus'", [], [], 'span'),
         ]);

@@ -19,6 +19,7 @@ class ExampleTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
+                    ->assertSee('Laravel')
                     ->clickLink('Log in')
                     ->pause(500)
                     ->clickLink('Forgot your password?')

@@ -11,6 +11,8 @@ class FileEditor
 {
     protected static $writingTests = false;
 
+    protected $possibleMethods = ['MagicTestManager::run', 'magic_test', 'magic', 'm('];
+
     /**
      * Overwrites the current browser operations on a given content with new ones based on the given Grammar.
      *
@@ -32,12 +34,19 @@ class FileEditor
             "\n"
         );
 
+        $lastAction = $this->getLastAction($arrayContent, $method);
+
         $newTestContent = collect([]);
 
         foreach ($arrayContent as $key => $line) {
-            if ($this->isTestFirstAction($line, $firstAction)) {
+            if ($this->isTestLastAction($line, $lastAction)) {
                 self::$writingTests = true;
                 $newTestContent[] = Str::replaceLast(";", "", $line);
+
+                if ($this->isClickOrPress($newTestContent->last())) {
+                    $newTestContent[] = Grammar::indent('->pause(500)', 4);
+                }
+
                 $newTestContent[] = $this->buildGrammar($grammar);
 
                 if (empty($arrayContent[$key + 1])) {
@@ -71,6 +80,37 @@ class FileEditor
         return Str::contains(trim($line), trim($firstAction));
     }
 
+    protected function isTestLastAction(string $line, string $firstAction): bool
+    {
+        return Str::contains(trim($line), trim($firstAction));
+    }
+
+    protected function getLastAction(array $lines, string $method)
+    {
+        $a = [];
+        $fullMethod = 'public function ' . $method;
+
+        foreach ($lines as $key => $line) {
+            if (Str::contains($line, $fullMethod)) {
+                $reachedTestCase = true;
+                $testCaseKey = $key;
+
+                $breakpointKey = null;
+                foreach ($lines as $bKey => $line) {
+                    if (Str::contains($line, $this->possibleMethods)) {
+                        $breakpointKey = $bKey;
+                    }
+                }
+            }
+        }
+
+        $lastAction = collect($lines)->filter(function ($line, $key) use ($testCaseKey, $breakpointKey) {
+            return $key > $testCaseKey && $key < $breakpointKey && Str::endsWith($line, ';');
+        })->first();
+
+        return $lastAction;
+    }
+
     protected function buildGrammar(Collection $grammars): Collection
     {
         return $grammars->map(function (Grammar $grammar) use ($grammars) {
@@ -90,5 +130,10 @@ class FileEditor
             
             return implode("\n", $text);
         });
+    }
+
+    protected function isClickOrPress($line): bool
+    {
+        return Str::contains($line, ['click', 'clickLink', 'press']);
     }
 }
