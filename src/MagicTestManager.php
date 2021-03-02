@@ -5,22 +5,25 @@ namespace MagicTest\MagicTest;
 use Illuminate\Support\Collection;
 use Laravel\Dusk\Browser;
 use MagicTest\MagicTest\Grammar\Grammar;
+use Spatie\Backtrace\Backtrace;
 
 class MagicTestManager
 {
     public static function run(Browser $browser)
     {
-        $browser->script('MagicTest.run()');
+        $backtrace = collect(Backtrace::create()->withArguments()->limit(5)->frames());
 
-        $backtrace = debug_backtrace();
-        $caller = array_shift($backtrace);
-        $testMethod = $backtrace[3]['function'];
+        $callerKey = $backtrace[1]->method === 'magic_test' ? 2 : 1;
+        $caller = $backtrace[$callerKey];
+        $testMethod = $backtrace[$callerKey + 2]->method;
+
         MagicTest::setBrowserInstance($browser);
         MagicTest::setTestMethod($testMethod);
-        MagicTest::setOpenFile($caller['file']);
+        MagicTest::setOpenFile($caller->file);
 
+        $browser->script('MagicTest.run()');
 
-
+        $ok = new PendingOk;
         eval(\Psy\sh());
     }
 
@@ -32,6 +35,8 @@ class MagicTestManager
         $grammar = collect($output)->map(fn ($command) => Grammar::for($command));
 
         $this->buildTest($grammar);
+
+        print($grammar->count() . " new actions were added to ". MagicTest::$file . "::" . MagicTest::$method);
     }
 
     public function buildTest(Collection $grammar): void

@@ -20,8 +20,23 @@ if (! function_exists('flush')) {
 
 
 if (! function_exists('magic_test')) {
-    function magic_test()
+    function magic_test(...$arguments)
     {
-        return MagicTestManager::run();
+        return MagicTestManager::run(...$arguments);
+    }
+}
+
+if (! function_exists('magic')) {
+    function magic(...$arguments)
+    {
+        return MagicTestManager::run(...$arguments);
+    }
+}
+
+
+if (! function_exists('mt')) {
+    function mt(...$arguments)
+    {
+        return MagicTestManager::run(...$arguments);
     }
 }
