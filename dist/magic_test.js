@@ -26,17 +26,19 @@ function enableKeyboardShortcuts() {
     var text = selectedText();
 
     if (text.trim().length > 0) {
-      var action = "assert page.has_content?('" + text.replace("'", "\\\'") + "')";
+      var action = "see";
       var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
-      var target = "";
+      var target = "'".concat(text.replace("'", "\\\'"), "'");
       var options = "";
-      testingOutput.push({
+      MagicTest.addData({
         action: action,
+        path: '',
         target: target,
-        options: options
+        options: options,
+        classList: [],
+        tag: ''
       });
-      sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
-      alert("Generated an assertion for \"" + selectedText() + "\". Type `flush` in the debugger console to add it to your test file.");
+      alert("Generated an assertion for \"" + selectedText() + "\". Type `ok()` in the debugger console to add it to your test file.");
     }
   }
 
@@ -78,7 +80,7 @@ function click(event) {
 
   if (tagName == "BUTTON" || tagName == "A" || tagName == "INPUT" && event.currentTarget.type == "submit") {
     action = "click";
-    var target = event.currentTarget.value || event.currentTarget.text;
+    var target = event.currentTarget.value || event.currentTarget.text || event.currentTarget.innerText;
 
     if (!target) {
       return;
@@ -228,6 +230,58 @@ function finderForElement(element) {
   return "find(:xpath, '".concat(getPathTo(element), "')");
 }
 
+/***/ }),
+
+/***/ "./js/Mutation.js":
+/*!************************!*\
+  !*** ./js/Mutation.js ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "initializeMutationObserver": () => (/* binding */ initializeMutationObserver),
+/* harmony export */   "mutationStart": () => (/* binding */ mutationStart),
+/* harmony export */   "mutationEnd": () => (/* binding */ mutationEnd)
+/* harmony export */ });
+function initializeMutationObserver() {
+  window.mutationObserver = new MutationObserver(function (mutations) {
+    console.log("Mutation observed");
+
+    if (!window.target) {
+      console.log("There is no window.target element. Quitting the mutation callback function");
+      return;
+    }
+
+    var options = "";
+    var targetClass = window.target.classList[0] ? ".".concat(window.target.classList[0]) : "";
+    var text = window.target.innerText ? "', text: '".concat(window.target.innerText) : "";
+    var action = "".concat(finderForElement(window.target), ".hover"); // var action = `find('${window.target.localName}${targetClass}${text}').hover`;
+
+    var target = "";
+    var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
+    testingOutput.push({
+      action: action,
+      target: target,
+      options: options
+    });
+    sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
+  });
+}
+function mutationStart(evt) {
+  window.target = evt.target;
+  var opts = {
+    attributes: true,
+    characterData: true,
+    childList: true,
+    subtree: true
+  };
+  window.mutationObserver.observe(document.documentElement, opts);
+}
+function mutationEnd() {
+  window.mutationObserver.disconnect();
+}
+
 /***/ })
 
 /******/ 	});
@@ -295,6 +349,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Events_Click__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Events/Click */ "./js/Events/Click.js");
 /* harmony import */ var _Events_Keypress__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Events/Keypress */ "./js/Events/Keypress.js");
 /* harmony import */ var _Context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Context */ "./js/Context.js");
+/* harmony import */ var _Mutation__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Mutation */ "./js/Mutation.js");
+
 
 
 
@@ -308,8 +364,11 @@ function initializeStorage() {
 $(function () {
   console.log("Magic Test started");
   initializeStorage();
+  (0,_Mutation__WEBPACK_IMPORTED_MODULE_3__.initializeMutationObserver)();
 });
 document.addEventListener("keypress", _Events_Keypress__WEBPACK_IMPORTED_MODULE_1__.default);
+document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationStart, true);
+document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationEnd, false);
 $(document).on("click", "*", _Events_Click__WEBPACK_IMPORTED_MODULE_0__.default);
 $(document).ready(function () {
   (0,_Context__WEBPACK_IMPORTED_MODULE_2__.enableKeyboardShortcuts)();

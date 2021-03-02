@@ -4,6 +4,7 @@ namespace MagicTest\MagicTest;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use MagicTest\MagicTest\Grammar\Click;
 use MagicTest\MagicTest\Grammar\Grammar;
 
 class FileEditor
@@ -74,8 +75,14 @@ class FileEditor
     {
         return $grammars->map(function (Grammar $grammar) use ($grammars) {
             $isLast = $grammar === $grammars->last();
+            $text = [$grammar->build() . ($isLast ? ';' : '')];
+
+            if ($grammar instanceof Click) {
+                // this is a workaround since Dusk is not properly filling fields unless it waits a bit.
+                $text[] = Grammar::indent('->pause(500)', 4);
+            }
             
-            return $grammar->build() . ($isLast ? ';' : '');
+            return implode("\n", $text);
         });
     }
 }

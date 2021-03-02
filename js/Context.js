@@ -7,17 +7,23 @@ export function enableKeyboardShortcuts() {
     }
 
     document.addEventListener('keydown', keydown, false);
-
+    
     function generateAssertion() {
         var text = selectedText();
         if (text.trim().length > 0) {
-            var action = "assert page.has_content?('" + text.replace("'", "\\\'") + "')";
+            var action = "see";
             var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
-            var target = "";
+            var target = `'${text.replace("'", "\\\'")}'`;
             var options = "";
-            testingOutput.push({ action: action, target: target, options: options });
-            sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
-            alert("Generated an assertion for \"" + selectedText() + "\". Type `flush` in the debugger console to add it to your test file.");
+            MagicTest.addData({
+                action: action,
+                path: '',
+                target: target,
+                options: options,
+                classList: [],
+                tag: '',
+            });
+            alert("Generated an assertion for \"" + selectedText() + "\". Type `ok()` in the debugger console to add it to your test file.");
         }
     }
 

@@ -6,10 +6,10 @@ class Click extends Grammar
 {
     public function action(): string
     {
-        if ($this->tag === 'a') {
-            return "->clickLink({$this->target})";
-        }
-
-        return "->click({$this->target})";
+        return [
+            'a' => "->clickLink({$this->target})",
+            'button' => "->press({$this->target})",
+            'default' => "->click({$this->target})",
+        ][$this->tag] ?? "->click({$this->target})";
     }
 }

@@ -14,7 +14,7 @@ export default function click(event) {
         (tagName == "INPUT" && event.currentTarget.type == "submit")
     ) {
         action = "click";
-        var target = event.currentTarget.value || event.currentTarget.text;
+        var target = event.currentTarget.value || event.currentTarget.text || event.currentTarget.innerText;
         if (!target) {
             return;
         }
