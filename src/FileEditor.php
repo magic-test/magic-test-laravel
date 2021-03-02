@@ -75,11 +75,17 @@ class FileEditor
     {
         return $grammars->map(function (Grammar $grammar) use ($grammars) {
             $isLast = $grammar === $grammars->last();
-            $text = [$grammar->build() . ($isLast ? ';' : '')];
 
-            if ($grammar instanceof Click) {
-                // this is a workaround since Dusk is not properly filling fields unless it waits a bit.
-                $text[] = Grammar::indent('->pause(500)', 4);
+            $needsPause = ($grammar instanceof Click && in_array($grammar->tag, ['a', 'button']));
+
+            if ($isLast) {
+                $text = [$grammar->build() . ';'];
+            } else {
+                $text = [$grammar->build()];
+
+                if ($needsPause) {
+                    $text[] = Grammar::indent('->pause(500)', 4);
+                }
             }
             
             return implode("\n", $text);
