@@ -12,23 +12,33 @@ function initializeStorage() {
 $(function () {
     console.log("Magic Test started");
     initializeStorage();
-    initializeMutationObserver();
 });
 
-
-document.addEventListener("keypress", KeypressFunction);
-document.addEventListener('mouseover', mutationStart, true);
-document.addEventListener('mouseover', mutationEnd, false);
-
-$(document).on("click", "*", ClickFunction);
-
-$(document).ready(function () {
-    enableKeyboardShortcuts();
-});
 
 window.MagicTest = {
+    running: false,
+
+    start()
+    {
+        this.running = true;
+
+        document.addEventListener("keypress", KeypressFunction);
+        document.addEventListener('mouseover', mutationStart, true);
+        document.addEventListener('mouseover', mutationEnd, false);   
+        $(document).on("click", "*", ClickFunction);
+        enableKeyboardShortcuts();
+        initializeMutationObserver();
+    },
+    stop() {
+        this.running = false;
+    },
+
     getData() {
         return sessionStorage.getItem("testingOutput") || {};
+    },
+    formattedData()
+    {
+        return JSON.parse(this.getData());
     },
     addData(data) {
         let testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));

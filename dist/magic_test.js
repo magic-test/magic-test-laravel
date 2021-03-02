@@ -364,18 +364,26 @@ function initializeStorage() {
 $(function () {
   console.log("Magic Test started");
   initializeStorage();
-  (0,_Mutation__WEBPACK_IMPORTED_MODULE_3__.initializeMutationObserver)();
-});
-document.addEventListener("keypress", _Events_Keypress__WEBPACK_IMPORTED_MODULE_1__.default);
-document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationStart, true);
-document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationEnd, false);
-$(document).on("click", "*", _Events_Click__WEBPACK_IMPORTED_MODULE_0__.default);
-$(document).ready(function () {
-  (0,_Context__WEBPACK_IMPORTED_MODULE_2__.enableKeyboardShortcuts)();
 });
 window.MagicTest = {
+  running: false,
+  start: function start() {
+    this.running = true;
+    document.addEventListener("keypress", _Events_Keypress__WEBPACK_IMPORTED_MODULE_1__.default);
+    document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationStart, true);
+    document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationEnd, false);
+    $(document).on("click", "*", _Events_Click__WEBPACK_IMPORTED_MODULE_0__.default);
+    (0,_Context__WEBPACK_IMPORTED_MODULE_2__.enableKeyboardShortcuts)();
+    (0,_Mutation__WEBPACK_IMPORTED_MODULE_3__.initializeMutationObserver)();
+  },
+  stop: function stop() {
+    this.running = false;
+  },
   getData: function getData() {
     return sessionStorage.getItem("testingOutput") || {};
+  },
+  formattedData: function formattedData() {
+    return JSON.parse(this.getData());
   },
   addData: function addData(data) {
     var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
