@@ -9,6 +9,7 @@ use MagicTest\MagicTest\Grammar\Grammar;
 
 class FileEditor
 {
+    const MACRO = '->magic()';
     protected static $writingTests = false;
 
     protected $possibleMethods = ['MagicTestManager::run', 'magic_test', 'magic', 'm('];
@@ -41,17 +42,26 @@ class FileEditor
         foreach ($arrayContent as $key => $line) {
             if ($this->isTestLastAction($line, $lastAction)) {
                 self::$writingTests = true;
-                $newTestContent[] = Str::replaceLast(";", "", $line);
+
+                if (! Str::contains($line, self::MACRO)) {
+                    $newTestContent[] = Str::replaceLast(";", "", $line);
+                }
 
                 if ($this->isClickOrPress($newTestContent->last())) {
                     $newTestContent[] = Grammar::indent('->pause(500)', 4);
                 }
 
-                $newTestContent[] = $this->buildGrammar($grammar);
+                $newTestContent[] = $this->buildGrammar($grammar, Str::contains($line, self::MACRO));
 
-                if (empty($arrayContent[$key + 1])) {
-                    self::$writingTests = false;
+                if (Str::contains($line, self::MACRO)) {
+                    $newTestContent[] = Grammar::indent(self::MACRO, 4) . ';';
                 }
+
+
+
+                // if (empty($arrayContent[$key + 1])) {
+                self::$writingTests = false;
+                // }
 
                 continue;
             }
@@ -71,6 +81,7 @@ class FileEditor
             // push the remaining lines.
             $newTestContent[] = $line;
         }
+
 
         return $newTestContent->flatten()->implode("\n");
     }
@@ -99,26 +110,31 @@ class FileEditor
                 foreach ($lines as $bKey => $line) {
                     if (Str::contains($line, $this->possibleMethods)) {
                         $breakpointKey = $bKey;
+                        $breakpointType = trim($line) === '->magic();' ? 'macro' : 'regular';
                     }
                 }
             }
         }
 
-        $lastAction = collect($lines)->filter(function ($line, $key) use ($testCaseKey, $breakpointKey) {
+        $lastAction = collect($lines)->filter(function ($line, $key) use ($testCaseKey, $breakpointKey, $breakpointType) {
+            if ($breakpointType === 'macro') {
+                return $key > $testCaseKey && $key <= $breakpointKey && Str::endsWith($line, ';');
+            }
+
             return $key > $testCaseKey && $key < $breakpointKey && Str::endsWith($line, ';');
         })->first();
 
         return $lastAction;
     }
 
-    protected function buildGrammar(Collection $grammars): Collection
+    protected function buildGrammar(Collection $grammars, $endsWithMacro = false): Collection
     {
-        return $grammars->map(function (Grammar $grammar) use ($grammars) {
+        return $grammars->map(function (Grammar $grammar) use ($grammars, $endsWithMacro) {
             $isLast = $grammar === $grammars->last();
 
             $needsPause = ($grammar instanceof Click && in_array($grammar->tag, ['a', 'button']));
 
-            if ($isLast) {
+            if ($isLast && ! $endsWithMacro) {
                 $text = [$grammar->build() . ';'];
             } else {
                 $text = [$grammar->build()];

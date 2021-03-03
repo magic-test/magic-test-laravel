@@ -11,11 +11,18 @@ class MagicTestManager
 {
     public static function run(Browser $browser)
     {
-        $backtrace = collect(Backtrace::create()->withArguments()->limit(5)->frames());
+        $backtrace = collect(Backtrace::create()->withArguments()->limit(10)->frames());
 
-        $callerKey = $backtrace[1]->method === 'magic_test' ? 2 : 1;
-        $caller = $backtrace[$callerKey];
-        $testMethod = $backtrace[$callerKey + 2]->method;
+
+        // this means it was called with the magic() macro
+        if ($backtrace[3]->method === '__call') {
+            $caller = $backtrace[6];
+            $testMethod = $caller->method;
+        } else {
+            $callerKey = $backtrace[1]->method === 'magic_test' ? 2 : 1;
+            $caller = $backtrace[$callerKey];
+            $testMethod = $backtrace[$callerKey + 2]->method;
+        }
 
         MagicTest::setBrowserInstance($browser);
         MagicTest::setTestMethod($testMethod);

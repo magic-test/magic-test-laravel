@@ -3,6 +3,7 @@
 namespace MagicTest\MagicTest;
 
 use Illuminate\Support\Facades\Blade;
+use Laravel\Dusk\Browser;
 use MagicTest\MagicTest\Commands\MagicTestCommand;
 use MagicTest\MagicTest\Controllers\MagicTestController;
 use Spatie\LaravelPackageTools\Package;
@@ -29,8 +30,8 @@ class MagicTestServiceProvider extends PackageServiceProvider
     {
         parent::boot();
 
-
         $this->app->singleton('magic-test-laravel', fn ($app) => new MagicTest);
+        Browser::macro('magic', fn () => MagicTestManager::run($this));
 
         Blade::directive('magicTestScripts', [MagicTest::class, 'scripts']);
     }
