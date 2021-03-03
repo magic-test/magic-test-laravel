@@ -26,12 +26,45 @@ class FileEditor
      */
     public function process(string $content, Collection $grammar, string $method): string
     {
-        $file = File::fromContent($content);
+        $file = File::fromContent($content, $method);
+        $lastAction = $file->getLastAction();
 
 
-        $lastAction = $file->getLastAction($method);
+        $file->forEachLine(function ($line, $key) use ($file) {
+            if ($file->isLastAction($line)) {
+                $file->startWritingTest();
+                self::$writingTests = true;
 
-        $newTestContent = collect([]);
+                if (! $line->isMacroCall()) {
+                    $line->removeSemicolon();
+                }
+
+                if ($line->isClickOrPress()) {
+                    $file->addContentAfterLine($line, Line::indented('->pause(500)', 4));
+                }
+
+                $file->addTestLines($this->buildGrammar($grammar, $line->isMacroCall()));
+
+                if ($line->isMacroCall()) {
+                    $file->removeLine($line);
+                    $file->addTestLine(Line::indented(self::MACRO, 4)->final());
+                }
+
+                $file->stopWritingTest();
+
+                return;
+            }
+
+            if ($file->writingTest) {
+                if ($line->endsWith(';')) {
+                    return $file->stopWritingTest();
+                }
+
+                return;
+            }
+        });
+
+        dd($file);
 
         foreach ($file->lines as $key => $line) {
             if ($this->isTestLastAction($line, $lastAction)) {

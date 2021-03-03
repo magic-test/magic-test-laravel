@@ -10,25 +10,36 @@ class File
     const MACRO = '->magic()';
 
     public $content;
+    public $method;
+
     public $lines;
+
+    public $stopTestsBeforeKey;
+
+    public $currentLineInIteration;
+
+    public $writingTest = false;
+
+    public $lastLineAdded;
 
     protected $possibleMethods = ['MagicTestManager::run', 'magic_test', 'magic', 'm('];
 
-    public function __construct(string $content)
+    public function __construct(string $content, string $method)
     {
         $this->content = $content;
+        $this->method = $method;
         $this->lines = $this->generateLines();
     }
 
-    public static function fromContent(string $content): self
+    public static function fromContent(string $content, string $method): self
     {
-        return new static($content);
+        return new static($content, $method);
     }
 
-    public function getLastAction(string $method): Line
+    public function getLastAction(): Line
     {
         $a = [];
-        $fullMethod = 'public function ' . $method;
+        $fullMethod = 'public function ' . $this->method;
 
         foreach ($this->lines as $key => $line) {
             if (Str::contains((string) $line, $fullMethod)) {
@@ -54,6 +65,43 @@ class File
         })->first();
 
         return $lastAction;
+    }
+
+    public function isLastAction(Line $line): bool
+    {
+        return Str::contains(trim($line), trim($this->getLastAction()));
+    }
+
+    public function forEachLine(callable $closure)
+    {
+        foreach ($this->lines as $key => $line) {
+            $this->currentLineInIteration = $line;
+            $closure($line, $key);
+        }
+    }
+
+    public function addContentAfterLine(Line $referenceLine, Line $newLine): void
+    {
+        $this->lines = $this->lines->map(function (Line $line, $key) use ($referenceLine, $newLine) {
+            if ($line == $referenceLine) {
+                return [$line, $newLine];
+            }
+
+            return $line;
+        })->flatten();
+
+        $this->lastLineAdded = $newLine;
+    }
+
+    public function startWritingTest(): void
+    {
+        $this->testStartsAtLine = $this->currentLineInIteration;
+        $this->writingTest = true;
+    }
+
+    public function stopWritingTest(): void
+    {
+        $this->writingTest = false;
     }
 
     protected function generateLines(): Collection
