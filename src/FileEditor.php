@@ -6,6 +6,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use MagicTest\MagicTest\Grammar\Click;
 use MagicTest\MagicTest\Grammar\Grammar;
+use MagicTest\MagicTest\Parser\File;
+use MagicTest\MagicTest\Parser\Line;
 
 class FileEditor
 {
@@ -24,37 +26,29 @@ class FileEditor
      */
     public function process(string $content, Collection $grammar, string $method): string
     {
-        $arrayContent = explode("\n", $content);
+        $file = File::fromContent($content);
 
-        $firstAction = strtok(
-            Str::of($content)
-                ->after($method)
-                ->after('$browser->')
-                ->before("});\n")
-                ->__toString(),
-            "\n"
-        );
 
-        $lastAction = $this->getLastAction($arrayContent, $method);
+        $lastAction = $file->getLastAction($method);
 
         $newTestContent = collect([]);
 
-        foreach ($arrayContent as $key => $line) {
+        foreach ($file->lines as $key => $line) {
             if ($this->isTestLastAction($line, $lastAction)) {
                 self::$writingTests = true;
 
                 if (! Str::contains($line, self::MACRO)) {
-                    $newTestContent[] = Str::replaceLast(";", "", $line);
+                    $newTestContent[] = new Line(Str::replaceLast(";", "", $line));
                 }
 
                 if ($this->isClickOrPress($newTestContent->last())) {
-                    $newTestContent[] = Grammar::indent('->pause(500)', 4);
+                    $newTestContent[] = new Line(Grammar::indent('->pause(500)', 4));
                 }
 
                 $newTestContent[] = $this->buildGrammar($grammar, Str::contains($line, self::MACRO));
 
                 if (Str::contains($line, self::MACRO)) {
-                    $newTestContent[] = Grammar::indent(self::MACRO, 4) . ';';
+                    $newTestContent[] = new Line(Grammar::indent(self::MACRO, 4) . ';');
                 }
 
 
@@ -83,7 +77,8 @@ class FileEditor
         }
 
 
-        return $newTestContent->flatten()->implode("\n");
+
+        return $newTestContent->flatten()->map(fn (Line $line) => $line->__toString())->implode("\n");
     }
 
     protected function isTestFirstAction(string $line, string $firstAction): bool
@@ -91,9 +86,9 @@ class FileEditor
         return Str::contains(trim($line), trim($firstAction));
     }
 
-    protected function isTestLastAction(string $line, string $firstAction): bool
+    protected function isTestLastAction(Line $line, string $firstAction): bool
     {
-        return Str::contains(trim($line), trim($firstAction));
+        return Str::contains(trim((string) $line), trim($firstAction));
     }
 
     protected function getLastAction(array $lines, string $method)
@@ -135,15 +130,17 @@ class FileEditor
             $needsPause = ($grammar instanceof Click && in_array($grammar->tag, ['a', 'button']));
 
             if ($isLast && ! $endsWithMacro) {
-                $text = [$grammar->build() . ';'];
+                $text = [new Line($grammar->build() . ';')];
             } else {
-                $text = [$grammar->build()];
+                $text = [new Line($grammar->build())];
 
                 if ($needsPause) {
-                    $text[] = Grammar::indent('->pause(500)', 4);
+                    $text[] = new Line(Grammar::indent('->pause(500)', 4));
                 }
             }
-            
+
+            return $text;
+
             return implode("\n", $text);
         });
     }
