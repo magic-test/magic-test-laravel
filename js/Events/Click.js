@@ -8,6 +8,10 @@ export default function click(event) {
     var target = "";
     var options = "";
     var path = '';
+    var targetMeta = {
+        type: event.target.type || null
+    };
+
     if (
         tagName == "BUTTON" ||
         tagName == "A" ||
@@ -46,5 +50,6 @@ export default function click(event) {
         options: options,
         classList: classList,
         tag: tagName.toLowerCase(),
+        targetMeta: targetMeta
     });
 }

@@ -77,6 +77,9 @@ function click(event) {
   var target = "";
   var options = "";
   var path = '';
+  var targetMeta = {
+    type: event.target.type || null
+  };
 
   if (tagName == "BUTTON" || tagName == "A" || tagName == "INPUT" && event.currentTarget.type == "submit") {
     action = "click";
@@ -107,7 +110,8 @@ function click(event) {
     target: target,
     options: options,
     classList: classList,
-    tag: tagName.toLowerCase()
+    tag: tagName.toLowerCase(),
+    targetMeta: targetMeta
   });
 }
 
