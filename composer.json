@@ -17,6 +17,8 @@
     "require": {
         "php": "^7.1",
         "illuminate/contracts": "^8.0",
+        "illuminate/support": "^8.0",
+        "psy/psysh": "^0.10.4",
         "spatie/backtrace": "^1.1",
         "spatie/laravel-package-tools": "^1.1"
     },

@@ -3,8 +3,11 @@
 namespace MagicTest\MagicTest;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
+use MagicTest\MagicTest\Commands\Ok;
 use MagicTest\MagicTest\Grammar\Grammar;
+use Psy\Shell;
 use Spatie\Backtrace\Backtrace;
 
 class MagicTestManager
@@ -12,7 +15,6 @@ class MagicTestManager
     public static function run(Browser $browser)
     {
         $backtrace = collect(Backtrace::create()->withArguments()->limit(10)->frames());
-
 
         // this means it was called with the magic() macro
         if ($backtrace[3]->method === '__call') {
@@ -30,20 +32,29 @@ class MagicTestManager
 
         $browser->script('MagicTest.run()');
 
-        $ok = new PendingOk;
-        eval(\Psy\sh());
+        $shell = new Shell;
+        $shell->addCommands([
+            new Ok,
+        ]);
+        $shell->run();
     }
 
-    public function runScripts(): void
+    public function runScripts(): string
     {
         $browser = MagicTest::$browser;
 
         $output = json_decode($browser->driver->executeScript('return MagicTest.getData()'), true);
         $grammar = collect($output)->map(fn ($command) => Grammar::for($command));
 
+        if (is_null($grammar) || $grammar->isEmpty()) {
+            return "No actions were added to " . MagicTest::$file . '::' . MagicTest::$method;
+        }
+
         $this->buildTest($grammar);
 
-        print($grammar->count() . " new actions were added to ". MagicTest::$file . "::" . MagicTest::$method);
+        $browser->script('MagicTest.clear()');
+
+        return $grammar->count() . " new " . Str::plural('action', $grammar->count()) . " were added to ". MagicTest::$file . "::" . MagicTest::$method;
     }
 
     public function buildTest(Collection $grammar): void
