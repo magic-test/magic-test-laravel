@@ -43,6 +43,12 @@ export default function click(event) {
         return;
     }
 
+    let label = event.target.labels?.[0];
+
+    if (label) {
+        targetMeta.label = label.innerText;
+    }
+
     MagicTest.addData({
         action: action,
         path: path,

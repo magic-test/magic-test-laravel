@@ -2,6 +2,7 @@
 
 namespace MagicTest\MagicTest\Grammar;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Grammar
@@ -56,6 +57,11 @@ class Grammar
         }
         
         return trim($string);
+    }
+
+    public function hasTargetType(string $type): bool
+    {
+        return Arr::get($this->targetMeta, 'type') === $type;
     }
 
     public static function for(array $command)

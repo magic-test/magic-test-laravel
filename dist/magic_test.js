@@ -70,6 +70,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Finders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../Finders */ "./js/Finders.js");
 
 function click(event) {
+  var _event$target$labels;
+
   console.log(event);
   var tagName = event.currentTarget.tagName;
   var classList = event.currentTarget.classList;
@@ -102,6 +104,12 @@ function click(event) {
     action = "click";
   } else {
     return;
+  }
+
+  var label = (_event$target$labels = event.target.labels) === null || _event$target$labels === void 0 ? void 0 : _event$target$labels[0];
+
+  if (label) {
+    targetMeta.label = label.innerText;
   }
 
   MagicTest.addData({
