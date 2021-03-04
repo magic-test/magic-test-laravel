@@ -175,16 +175,24 @@ class File
         $lines = clone $this->lines;
 
         $this->fixBreakpoint();
+        $this->addNecessaryPausesToLines();
 
         return tap(
-            $this->addNecessaryPausesToLines()
+            $this->lines
             ->map(fn (Line $line) => $line->__toString())
             ->implode("\n"),
             fn () => $this->lines = $lines
         );
     }
 
-    public function addNecessaryPausesToLines(): Collection
+    /**
+     * After clicks and presses, we need to add a pause(500) call so the browsing
+     * works properly. This method iterates through all the lines and
+     * adds the pause calls where necessary.
+     *
+     * @return void
+     */
+    public function addNecessaryPausesToLines(): void
     {
         $this->forEachTestLine(function ($line) {
             $previousLine = $this->previousLineTo($line);
@@ -193,10 +201,16 @@ class File
                 $this->addContentAfterLine($previousLine, Line::pause());
             }
         });
-
-        return $this->lines;
     }
 
+    /**
+     * Depending wether the user used the fluent magic() call or the magic_test helper,
+     * we need to appropriately place semicolons. If the magic helper was used, we
+     * need to remove the semicolon from the line previous to it, since it is
+     * the one-to-last call on the chain.
+     *
+     * @return void
+     */
     public function fixBreakpoint(): void
     {
         if ($this->breakpointLine->isMacroCall()) {
