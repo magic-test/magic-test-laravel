@@ -14,7 +14,7 @@ class MagicTestMiddleware
 
         $content = $response->getContent();
 
-        if ($head = mb_strpos($content, '</body>') !== false) {
+        if (mb_strpos($content, '</body>') !== false) {
             $scripts = MagicTest::scripts();
             $response->setContent($content . "\n $scripts");
         }
