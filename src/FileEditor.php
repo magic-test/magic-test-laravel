@@ -16,6 +16,19 @@ class FileEditor
 
     protected $possibleMethods = ['MagicTestManager::run', 'magic_test', 'magic', 'm('];
 
+    public function finish(string $content, string $method): string
+    {
+        $file = File::fromContent($content, $method);
+
+        if ($file->breakpointLine->isMacroCall()) {
+            $file->previousLineTo($file->breakpointLine)->final();
+        }
+
+        $file->removeLine($file->breakpointLine);
+
+        return $file->freshOutput();
+    }
+
     /**
      * Overwrites the current browser operations on a given content with new ones based on the given Grammar.
      *

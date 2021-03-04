@@ -57,6 +57,19 @@ class MagicTestManager
         return $grammar->count() . " new " . Str::plural('action', $grammar->count()) . " were added to ". MagicTest::$file . "::" . MagicTest::$method;
     }
 
+    public function finish(): string
+    {
+        $content = file_get_contents(MagicTest::$file);
+        $method = MagicTest::$method;
+
+        file_put_contents(
+            MagicTest::$file,
+            (new FileEditor)->finish($content, $method)
+        );
+
+        return 'Your magic session has finished.';
+    }
+
     public function buildTest(Collection $grammar): void
     {
         $content = file_get_contents(MagicTest::$file);

@@ -86,7 +86,7 @@ class File
     public function testLines(): Collection
     {
         return $this->lines
-            ->skipUntil($this->testStartsAtLine)
+            ->skipUntil($this->initialMethodLine)
             ->takeUntil($this->breakpointLine)
             ->reject(fn (Line $line) => $line->isEmpty());
     }
@@ -108,7 +108,7 @@ class File
         collect($lines)->each(fn (Line $line, $key) => $this->addTestLine($line, $line === $lines->last()));
     }
 
-    public function removeLine(Line $originalLine): void
+    public function removeLine(Line $line): void
     {
         $this->lines = $this->lines->reject(
             fn (Line $originalLine) =>
@@ -173,6 +173,13 @@ class File
         return $this->lines->reverse()->values();
     }
 
+    public function freshOutput(): string
+    {
+        return $this->lines
+                ->map(fn (Line $line) => $line->__toString())
+                ->implode("\n");
+    }
+
     public function output(): string
     {
         $lines = clone $this->lines;
@@ -216,7 +223,7 @@ class File
      */
     public function fixBreakpoint(): void
     {
-        if ($this->breakpointLine->isMacroCall()) {
+        if (optional($this->breakpointLine)->isMacroCall()) {
             $this->previousLineTo($this->breakpointLine)->notFinal();
         }
     }
