@@ -33,45 +33,17 @@ class FileEditor
                 return;
             }
 
-
             $file->startWritingTest();
-
-            self::$writingTests = true;
 
             if (! $line->isMacroCall()) {
                 $line->removeSemicolon();
             }
 
-            // if ($line->isClickOrPress()) {
-            //     $file->addContentAfterLine($line, Line::indented('->pause(500)', 4));
-            // }
-
-
             $grammar = $this->buildGrammar($grammar, $line->isMacroCall());
-
             $file->addTestLines($grammar);
-
-
-
-            // if ($line->isMacroCall()) {
-            //     $file->removeLine($line);
-            //     $file->addTestLine(Line::indented(self::MACRO, 4)->final());
-            // }
-
-            
-
             $file->stopWritingTest();
 
             return;
-
-
-            if ($file->writingTest) {
-                if ($line->endsWith(';')) {
-                    return $file->stopWritingTest();
-                }
-
-                return;
-            }
         });
 
         return $file->output();

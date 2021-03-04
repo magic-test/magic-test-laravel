@@ -10,13 +10,16 @@ class File
     const MACRO = '->magic()';
 
     public $content;
+
     public $method;
 
     public $lines;
 
-    public $stopTestsBeforeKey;
-
     public $initialMethodLine;
+
+    public $breakpointLine;
+
+    public $lastActionLine;
 
     public $currentLineInIteration;
 
@@ -54,16 +57,14 @@ class File
                             ->first();
 
 
-
-
-        $lastAction = $this->reversedLines()
+        $this->lastActionLine = $this->reversedLines()
                         ->skipUntil(fn (Line $line) => $line === $this->breakpointLine)
                         ->skip(1)
                         ->takeUntiL(fn (Line $line) => $line === $this->initialMethodLine)
                         ->reject(fn (Line $line) => $line->isEmpty())
                         ->first();
 
-        return $lastAction;
+        return $this->lastActionLine;
     }
 
     public function isLastAction(Line $line): bool
@@ -181,10 +182,6 @@ class File
             ->implode("\n"),
             fn () => $this->lines = $lines
         );
-    
-        return $this->lines
-                    ->map(fn (Line $line) => $line->__toString())
-                    ->implode("\n");
     }
 
     public function addNecessaryPausesToLines(): Collection
