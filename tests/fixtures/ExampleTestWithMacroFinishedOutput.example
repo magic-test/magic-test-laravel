@@ -1,0 +1,35 @@
+<?php
+
+namespace Tests\Browser;
+
+use Tests\DuskTestCase;
+use Laravel\Dusk\Browser;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+
+class ExampleTest extends DuskTestCase
+{
+    use DatabaseMigrations;
+
+    /**
+     * A basic browser test example.
+     *
+     * @return void
+     */
+    public function testBasicExample()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/')
+                    ->clickLink('Register')
+                    ->pause(500)
+                    ->type('name', 'Mateus Guimaraes')
+                    ->type('email', 'mateus@mateusguimaraes.com')
+                    ->type('password', 'password')
+                    ->type('password_confirmation', 'password')
+                    ->radio('input[name=some_radio]', 'Option 1')
+                    ->press('REGISTER')
+                    ->pause(500)
+                    ->press('Mateus')
+                    ->magic();
+        });
+    }
+}

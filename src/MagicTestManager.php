@@ -5,6 +5,7 @@ namespace MagicTest\MagicTest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
+use MagicTest\MagicTest\Commands\Finish;
 use MagicTest\MagicTest\Commands\Ok;
 use MagicTest\MagicTest\Grammar\Grammar;
 use Psy\Shell;
@@ -35,6 +36,7 @@ class MagicTestManager
         $shell = new Shell;
         $shell->addCommands([
             new Ok,
+            new Finish,
         ]);
         $shell->run();
     }

@@ -61,6 +61,21 @@ class FileEditorTest extends TestCase
     }
 
     /** @test */
+    public function it_properly_adds_new_actions_to_a_test()
+    {
+        $input = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithMacroFinishedInput.example');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithMacroFinishedOutput.example');
+        
+
+        $grammar = collect([
+            new Click('', "'Mateus'", [], [], 'button'),
+        ]);
+
+        $processedText = (new FileEditor)->process($input, $grammar, 'testBasicExample');
+        $this->assertEquals($expectedOutput, $processedText);
+    }
+
+    /** @test */
     public function it_finishes_a_test_using_the_helper()
     {
         $expectedInput = file_get_contents(__DIR__ . '/fixtures/ExampleTestOutput.example');

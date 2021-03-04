@@ -207,7 +207,7 @@ class File
         $this->forEachTestLine(function ($line) {
             $previousLine = $this->previousLineTo($line);
 
-            if ($previousLine->isClickOrPress()) {
+            if ($previousLine->isClickOrPress() && ! $line->isPause()) {
                 $this->addContentAfterLine($previousLine, Line::pause());
             }
         });
