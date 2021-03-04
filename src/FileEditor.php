@@ -27,33 +27,43 @@ class FileEditor
     public function process(string $content, Collection $grammar, string $method): string
     {
         $file = File::fromContent($content, $method);
-        $lastAction = $file->getLastAction();
 
-
-        $file->forEachLine(function ($line, $key) use ($file) {
-            if ($file->isLastAction($line)) {
-                $file->startWritingTest();
-                self::$writingTests = true;
-
-                if (! $line->isMacroCall()) {
-                    $line->removeSemicolon();
-                }
-
-                if ($line->isClickOrPress()) {
-                    $file->addContentAfterLine($line, Line::indented('->pause(500)', 4));
-                }
-
-                $file->addTestLines($this->buildGrammar($grammar, $line->isMacroCall()));
-
-                if ($line->isMacroCall()) {
-                    $file->removeLine($line);
-                    $file->addTestLine(Line::indented(self::MACRO, 4)->final());
-                }
-
-                $file->stopWritingTest();
-
+        $file->forEachLine(function (Line $line, $key) use ($file, $grammar) {
+            if (! $file->isLastAction($line)) {
                 return;
             }
+
+
+            $file->startWritingTest();
+
+            self::$writingTests = true;
+
+            if (! $line->isMacroCall()) {
+                $line->removeSemicolon();
+            }
+
+            // if ($line->isClickOrPress()) {
+            //     $file->addContentAfterLine($line, Line::indented('->pause(500)', 4));
+            // }
+
+
+            $grammar = $this->buildGrammar($grammar, $line->isMacroCall());
+
+            $file->addTestLines($grammar);
+
+
+
+            // if ($line->isMacroCall()) {
+            //     $file->removeLine($line);
+            //     $file->addTestLine(Line::indented(self::MACRO, 4)->final());
+            // }
+
+            
+
+            $file->stopWritingTest();
+
+            return;
+
 
             if ($file->writingTest) {
                 if ($line->endsWith(';')) {
@@ -64,54 +74,7 @@ class FileEditor
             }
         });
 
-        dd($file);
-
-        foreach ($file->lines as $key => $line) {
-            if ($this->isTestLastAction($line, $lastAction)) {
-                self::$writingTests = true;
-
-                if (! Str::contains($line, self::MACRO)) {
-                    $newTestContent[] = new Line(Str::replaceLast(";", "", $line));
-                }
-
-                if ($this->isClickOrPress($newTestContent->last())) {
-                    $newTestContent[] = new Line(Grammar::indent('->pause(500)', 4));
-                }
-
-                $newTestContent[] = $this->buildGrammar($grammar, Str::contains($line, self::MACRO));
-
-                if (Str::contains($line, self::MACRO)) {
-                    $newTestContent[] = new Line(Grammar::indent(self::MACRO, 4) . ';');
-                }
-
-
-
-                // if (empty($arrayContent[$key + 1])) {
-                self::$writingTests = false;
-                // }
-
-                continue;
-            }
-
-            if (self::$writingTests) {
-                // if we are still writing tests but the line ends with a ;, then we stop "writing tests" and skipping lines.
-                if (Str::endsWith(trim($line), ';')) {
-                    self::$writingTests = false;
-
-                    continue;
-                } else {
-                    // if we are still writing tests, it means this line is from the original file/previous test.
-                    continue;
-                }
-            }
-
-            // push the remaining lines.
-            $newTestContent[] = $line;
-        }
-
-
-
-        return $newTestContent->flatten()->map(fn (Line $line) => $line->__toString())->implode("\n");
+        return $file->output();
     }
 
     protected function isTestFirstAction(string $line, string $firstAction): bool
@@ -124,37 +87,6 @@ class FileEditor
         return Str::contains(trim((string) $line), trim($firstAction));
     }
 
-    protected function getLastAction(array $lines, string $method)
-    {
-        $a = [];
-        $fullMethod = 'public function ' . $method;
-
-        foreach ($lines as $key => $line) {
-            if (Str::contains($line, $fullMethod)) {
-                $reachedTestCase = true;
-                $testCaseKey = $key;
-
-                $breakpointKey = null;
-                foreach ($lines as $bKey => $line) {
-                    if (Str::contains($line, $this->possibleMethods)) {
-                        $breakpointKey = $bKey;
-                        $breakpointType = trim($line) === '->magic();' ? 'macro' : 'regular';
-                    }
-                }
-            }
-        }
-
-        $lastAction = collect($lines)->filter(function ($line, $key) use ($testCaseKey, $breakpointKey, $breakpointType) {
-            if ($breakpointType === 'macro') {
-                return $key > $testCaseKey && $key <= $breakpointKey && Str::endsWith($line, ';');
-            }
-
-            return $key > $testCaseKey && $key < $breakpointKey && Str::endsWith($line, ';');
-        })->first();
-
-        return $lastAction;
-    }
-
     protected function buildGrammar(Collection $grammars, $endsWithMacro = false): Collection
     {
         return $grammars->map(function (Grammar $grammar) use ($grammars, $endsWithMacro) {
@@ -162,20 +94,12 @@ class FileEditor
 
             $needsPause = ($grammar instanceof Click && in_array($grammar->tag, ['a', 'button']));
 
-            if ($isLast && ! $endsWithMacro) {
-                $text = [new Line($grammar->build() . ';')];
-            } else {
-                $text = [new Line($grammar->build())];
-
-                if ($needsPause) {
-                    $text[] = new Line(Grammar::indent('->pause(500)', 4));
-                }
-            }
+            $text = [new Line($grammar->build())];
 
             return $text;
 
             return implode("\n", $text);
-        });
+        })->flatten();
     }
 
     protected function isClickOrPress($line): bool

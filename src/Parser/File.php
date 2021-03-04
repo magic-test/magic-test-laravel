@@ -16,6 +16,8 @@ class File
 
     public $stopTestsBeforeKey;
 
+    public $initialMethodLine;
+
     public $currentLineInIteration;
 
     public $writingTest = false;
@@ -29,6 +31,7 @@ class File
         $this->content = $content;
         $this->method = $method;
         $this->lines = $this->generateLines();
+        $this->lastLineAdded = $this->getLastAction();
     }
 
     public static function fromContent(string $content, string $method): self
@@ -38,31 +41,27 @@ class File
 
     public function getLastAction(): Line
     {
-        $a = [];
         $fullMethod = 'public function ' . $this->method;
 
-        foreach ($this->lines as $key => $line) {
-            if (Str::contains((string) $line, $fullMethod)) {
-                $reachedTestCase = true;
-                $testCaseKey = $key;
+        $this->initialMethodLine = $this->lines
+                            ->filter(fn (Line $line) => Str::contains($line, $fullMethod))
+                            ->first();
 
-                $breakpointKey = null;
-                foreach ($this->lines as $bKey => $line) {
-                    if (Str::contains($line, $this->possibleMethods)) {
-                        $breakpointKey = $bKey;
-                        $breakpointType = trim($line) === '->magic();' ? 'macro' : 'regular';
-                    }
-                }
-            }
-        }
 
-        $lastAction = $this->lines->filter(function ($line, $key) use ($testCaseKey, $breakpointKey, $breakpointType) {
-            if ($breakpointType === 'macro') {
-                return $key > $testCaseKey && $key <= $breakpointKey && Str::endsWith($line, ';');
-            }
+        $this->breakpointLine = $this->lines
+                            ->skipUntil(fn (Line $line) => $line === $this->initialMethodLine)
+                            ->filter(fn (Line $line) => Str::contains($line, $this->possibleMethods))
+                            ->first();
 
-            return $key > $testCaseKey && $key < $breakpointKey && Str::endsWith($line, ';');
-        })->first();
+
+
+
+        $lastAction = $this->reversedLines()
+                        ->skipUntil(fn (Line $line) => $line === $this->breakpointLine)
+                        ->skip(1)
+                        ->takeUntiL(fn (Line $line) => $line === $this->initialMethodLine)
+                        ->reject(fn (Line $line) => $line->isEmpty())
+                        ->first();
 
         return $lastAction;
     }
@@ -80,17 +79,56 @@ class File
         }
     }
 
-    public function addContentAfterLine(Line $referenceLine, Line $newLine): void
+    public function testLines(): Collection
     {
-        $this->lines = $this->lines->map(function (Line $line, $key) use ($referenceLine, $newLine) {
-            if ($line == $referenceLine) {
-                return [$line, $newLine];
+        return $this->lines
+            ->skipUntil($this->testStartsAtLine)
+            ->takeUntil($this->breakpointLine)
+            ->reject(fn (Line $line) => $line->isEmpty());
+    }
+
+    public function forEachTestLine(callable $closure)
+    {
+        foreach ($this->testLines() as $line) {
+            $closure($line);
+        }
+    }
+
+    public function addTestLine(Line $line, $final = false): void
+    {
+        $this->addContentAfterLine($this->lastLineAdded, $line, $final);
+    }
+
+    public function addTestLines($lines): void
+    {
+        collect($lines)->each(fn (Line $line, $key) => $this->addTestLine($line, $line === $lines->last()));
+    }
+
+    public function removeLine(Line $line): void
+    {
+        $this->lines = $this->lines->reject(
+            fn (Line $originalLine) =>
+             $originalLine == $line
+        );
+    }
+
+    public function addContentAfterLine(Line $referenceLine, Line $newLine, $final = false): void
+    {
+        $this->lines = $this->lines->map(function (Line $line, $key) use ($referenceLine, $newLine, $final) {
+            if ($line !== $referenceLine) {
+                return $line;
             }
 
-            return $line;
-        })->flatten();
+            if ($final) {
+                $newLine->final();
+            }
 
-        $this->lastLineAdded = $newLine;
+            $return = [$line, $newLine];
+
+            $this->lastLineAdded = last($return);
+
+            return $return;
+        })->flatten();
     }
 
     public function startWritingTest(): void
@@ -102,6 +140,71 @@ class File
     public function stopWritingTest(): void
     {
         $this->writingTest = false;
+    }
+
+    public function previousLineTo(Line $line, $ignoreHelpers = true): Line
+    {
+        $lineKey = $this->reversedLines()->search($line);
+
+        return $this->reversedLines()->filter(
+            fn (Line $line, $key) =>
+            $key > $lineKey && ($ignoreHelpers ? ! $line->isHelper() : true)
+        )->first();
+    }
+
+    public function isFirstClick(Line $line): bool
+    {
+        $reversedLines = $this->reversedLines();
+
+        return $this->reversedLines()
+                    ->skipUntil(fn (Line $foundLine) => $foundLine === $line)
+                    ->skip(1)
+                    ->takeUntil(fn (Line $foundLine) => $foundLine === $this->initialMethodLine)
+                    ->filter(fn (Line $line) => $line->isClickOrPress())
+                    ->isEmpty();
+    }
+
+    public function reversedLines(): Collection
+    {
+        return $this->lines->reverse()->values();
+    }
+
+    public function output(): string
+    {
+        $lines = clone $this->lines;
+
+        $this->fixBreakpoint();
+
+        return tap(
+            $this->addNecessaryPausesToLines()
+            ->map(fn (Line $line) => $line->__toString())
+            ->implode("\n"),
+            fn () => $this->lines = $lines
+        );
+    
+        return $this->lines
+                    ->map(fn (Line $line) => $line->__toString())
+                    ->implode("\n");
+    }
+
+    public function addNecessaryPausesToLines(): Collection
+    {
+        $this->forEachTestLine(function ($line) {
+            $previousLine = $this->previousLineTo($line);
+
+            if ($previousLine->isClickOrPress()) {
+                $this->addContentAfterLine($previousLine, Line::pause());
+            }
+        });
+
+        return $this->lines;
+    }
+
+    public function fixBreakpoint(): void
+    {
+        if ($this->breakpointLine->isMacroCall()) {
+            $this->previousLineTo($this->breakpointLine)->notFinal();
+        }
     }
 
     protected function generateLines(): Collection
