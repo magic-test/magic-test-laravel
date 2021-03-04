@@ -50,13 +50,13 @@ class MagicTest
         $html[] = '<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>';
         // JavaScript assets.
         $html[] = '<script>';
-        $html[] = config('app.debug') ? $script : $this->minify($scripts);
+        $html[] = config('app.debug') ? $script : self::minify($scripts);
         $html[] = '</script>';
 
         return implode("\n", $html);
     }
 
-    protected function minify(string $subject): string
+    protected static function minify(string $subject): string
     {
         return preg_replace('~(\v|\t|\s{2,})~m', '', $subject);
     }
