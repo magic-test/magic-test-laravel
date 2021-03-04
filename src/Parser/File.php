@@ -9,27 +9,27 @@ class File
 {
     const MACRO = '->magic()';
 
-    public $content;
+    public string $content;
 
-    public $method;
+    public string $method;
 
-    public $lines;
+    public Collection $lines;
 
-    public $initialMethodLine;
+    public Line $initialMethodLine;
 
-    public $breakpointLine;
+    public Line $breakpointLine;
 
-    public $lastActionLine;
+    public Line $lastActionLine;
 
-    public $testStartsAtLine;
+    public ?Line $testStartsAtLine;
 
-    public $currentLineInIteration;
+    public ?Line $currentLineInIteration;
 
-    public $writingTest = false;
+    public bool $writingTest = false;
 
-    public $lastLineAdded;
+    public ?Line $lastLineAdded;
 
-    protected $possibleMethods = ['MagicTestManager::run', 'magic_test', 'magic', 'm('];
+    protected array $possibleMethods = ['MagicTestManager::run', 'magic_test', 'magic', 'm('];
 
     public function __construct(string $content, string $method)
     {
@@ -65,6 +65,7 @@ class File
                         ->takeUntiL(fn (Line $line) => $line === $this->initialMethodLine)
                         ->reject(fn (Line $line) => $line->isEmpty())
                         ->first();
+
 
         return $this->lastActionLine;
     }
