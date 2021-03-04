@@ -21,6 +21,8 @@ class File
 
     public $lastActionLine;
 
+    public $testStartsAtLine;
+
     public $currentLineInIteration;
 
     public $writingTest = false;
@@ -105,7 +107,7 @@ class File
         collect($lines)->each(fn (Line $line, $key) => $this->addTestLine($line, $line === $lines->last()));
     }
 
-    public function removeLine(Line $line): void
+    public function removeLine(Line $originalLine): void
     {
         $this->lines = $this->lines->reject(
             fn (Line $originalLine) =>

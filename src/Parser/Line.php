@@ -10,6 +10,10 @@ class Line
 {
     const PAUSE = '->pause(500)';
 
+    public $content;
+
+    public $key;
+    
     public function __construct(string $content, int $key = null)
     {
         $this->content = $content;
