@@ -17,7 +17,9 @@ class Finish extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->write(app(MagicTestManager::class)->finish(), true);
+        $actionOutput = (new MagicTestManager)->finish();
+
+        $output->write("<info>{$actionOutput}</info>", true);
 
         return 0;
     }

@@ -17,7 +17,9 @@ class Ok extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->write(app(MagicTestManager::class)->runScripts(), true);
+        $scriptOutput = (new MagicTestManager)->runScripts();
+
+        $output->write('<info>' . $scriptOutput . '</info>', true);
 
         return 0;
     }

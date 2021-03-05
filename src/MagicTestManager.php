@@ -8,6 +8,7 @@ use Laravel\Dusk\Browser;
 use MagicTest\MagicTest\Commands\Finish;
 use MagicTest\MagicTest\Commands\Ok;
 use MagicTest\MagicTest\Grammar\Grammar;
+use Psy\Configuration;
 use Psy\Shell;
 use Spatie\Backtrace\Backtrace;
 
@@ -33,7 +34,10 @@ class MagicTestManager
 
         $browser->script('MagicTest.run()');
 
-        $shell = new Shell;
+        $shell = new Shell(new Configuration([
+            'startupMessage' => '<info>Your Magic Test session has started!</info>',
+        ]));
+
         $shell->addCommands([
             new Ok,
             new Finish,
@@ -56,7 +60,7 @@ class MagicTestManager
 
         $browser->script('MagicTest.clear()');
 
-        return $grammar->count() . " new " . Str::plural('action', $grammar->count()) . " were added to ". MagicTest::$file . "::" . MagicTest::$method;
+        return $grammar->count() . " new " . Str::plural('action', $grammar->count()) . ($grammar->count() > 1 ? 'were' : 'was') . " added to ". MagicTest::$file . "::" . MagicTest::$method;
     }
 
     public function finish(): string
@@ -69,7 +73,7 @@ class MagicTestManager
             (new FileEditor)->finish($content, $method)
         );
 
-        return 'Your magic session has finished.';
+        return 'Your magic session has finished. See you later!';
     }
 
     public function buildTest(Collection $grammar): void
