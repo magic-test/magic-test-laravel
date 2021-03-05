@@ -14,6 +14,6 @@ class MagicTestCommand extends Command
     {
         $this->comment('Your Magic Test session is starting...');
         
-        shell_exec('DUSK_HEADLESS_DISABLED=1 php artisan dusk');
+        shell_exec('DUSK_HEADLESS_DISABLED=1 MAGIC_TEST=1 php artisan dusk');
     }
 }
