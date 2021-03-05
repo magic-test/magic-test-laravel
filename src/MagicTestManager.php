@@ -5,8 +5,10 @@ namespace MagicTest\MagicTest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
-use MagicTest\MagicTest\Commands\Ok;
 use MagicTest\MagicTest\Grammar\Grammar;
+use MagicTest\MagicTest\ShellCommands\Finish;
+use MagicTest\MagicTest\ShellCommands\Ok;
+use Psy\Configuration;
 use Psy\Shell;
 use Spatie\Backtrace\Backtrace;
 
@@ -32,9 +34,13 @@ class MagicTestManager
 
         $browser->script('MagicTest.run()');
 
-        $shell = new Shell;
+        $shell = new Shell(new Configuration([
+            'startupMessage' => '<info>Your Magic Test session has started!</info>',
+        ]));
+
         $shell->addCommands([
             new Ok,
+            new Finish,
         ]);
         $shell->run();
     }
@@ -54,7 +60,20 @@ class MagicTestManager
 
         $browser->script('MagicTest.clear()');
 
-        return $grammar->count() . " new " . Str::plural('action', $grammar->count()) . " were added to ". MagicTest::$file . "::" . MagicTest::$method;
+        return $grammar->count() . " new " . Str::plural('action', $grammar->count()) . ($grammar->count() > 1 ? ' were' : ' was') . " added to ". MagicTest::$file . "::" . MagicTest::$method;
+    }
+
+    public function finish(): string
+    {
+        $content = file_get_contents(MagicTest::$file);
+        $method = MagicTest::$method;
+
+        file_put_contents(
+            MagicTest::$file,
+            (new FileEditor)->finish($content, $method)
+        );
+
+        return 'Your Magic Test session has finished. See you later!';
     }
 
     public function buildTest(Collection $grammar): void

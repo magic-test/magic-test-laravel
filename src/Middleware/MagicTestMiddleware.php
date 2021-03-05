@@ -10,11 +10,15 @@ class MagicTestMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
+        if (! app()->environment(['local', 'testing'])) {
+            return $next($request);
+        }
+
         $response = $next($request);
 
         $content = $response->getContent();
 
-        if ($head = mb_strpos($content, '</body>') !== false) {
+        if (mb_strpos($content, '</body>') !== false) {
             $scripts = MagicTest::scripts();
             $response->setContent($content . "\n $scripts");
         }

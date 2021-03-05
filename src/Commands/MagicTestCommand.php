@@ -6,12 +6,14 @@ use Illuminate\Console\Command;
 
 class MagicTestCommand extends Command
 {
-    public $signature = 'magic-test-laravel';
+    public $signature = 'magic';
 
-    public $description = 'My command';
+    public $description = 'Run your Dusk Test Suite using Magic Test.';
 
     public function handle()
     {
-        $this->comment('All done');
+        $this->comment('Your Magic Test session is starting...');
+        
+        shell_exec('DUSK_HEADLESS_DISABLED=1 MAGIC_TEST=1 php artisan dusk');
     }
 }
