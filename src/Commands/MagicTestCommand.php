@@ -12,6 +12,8 @@ class MagicTestCommand extends Command
 
     public function handle()
     {
+        $this->comment('Your Magic Test session is starting...');
+        
         shell_exec('DUSK_HEADLESS_DISABLED=1 php artisan dusk');
     }
 }
