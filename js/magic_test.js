@@ -25,6 +25,7 @@ window.MagicTest = {
         document.addEventListener('mouseover', mutationStart, true);
         document.addEventListener('mouseover', mutationEnd, false);   
         $(document).on("click", "*", ClickFunction);
+        $('select').on('change', ClickFunction);
         enableKeyboardShortcuts();
         initializeMutationObserver();
     },

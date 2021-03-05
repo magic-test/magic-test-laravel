@@ -18,6 +18,10 @@ class Click extends Grammar
             $strippedTagsTarget = trim($this->target, "'");
 
             return "->radio('input[name={$strippedTagsTarget}]', '{$label}')";
+        } elseif ($this->tag === 'select') {
+            $label = Arr::get($this->targetMeta, 'label');
+
+            return "->select({$this->target}, '{$label}')";
         }
 
         return [

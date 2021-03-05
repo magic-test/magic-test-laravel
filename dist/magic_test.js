@@ -70,8 +70,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Finders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../Finders */ "./js/Finders.js");
 
 function click(event) {
-  var _event$target$labels;
-
   console.log(event);
   var tagName = event.currentTarget.tagName;
   var classList = event.currentTarget.classList;
@@ -92,6 +90,10 @@ function click(event) {
     }
 
     target = "'" + target.trim().replace("'", "\\'") + "'";
+  } else if (tagName == 'SELECT') {
+    action = "click";
+    var target = event.currentTarget.name;
+    target = "'" + target.trim().replace("'", "\\'") + "'";
   } else if (tagName == "INPUT") {
     var ignoreType = ["text", "password", "date", "email", "month", "number", "search"];
 
@@ -106,10 +108,24 @@ function click(event) {
     return;
   }
 
-  var label = (_event$target$labels = event.target.labels) === null || _event$target$labels === void 0 ? void 0 : _event$target$labels[0];
+  if (tagName === 'SELECT') {
+    targetMeta.label = event.currentTarget.value;
+    var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
+    var lastAction = testingOutput[testingOutput.length - 1];
 
-  if (label) {
-    targetMeta.label = label.innerText;
+    if (lastAction && lastAction.tag == tagName.toLowerCase() && lastAction.target == target) {
+      lastAction.targetMeta = targetMeta;
+      sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
+      return;
+    }
+  } else {
+    var _event$target$labels;
+
+    var label = (_event$target$labels = event.target.labels) === null || _event$target$labels === void 0 ? void 0 : _event$target$labels[0];
+
+    if (label) {
+      targetMeta.label = label.innerText;
+    }
   }
 
   MagicTest.addData({
@@ -387,6 +403,7 @@ window.MagicTest = {
     document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationStart, true);
     document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationEnd, false);
     $(document).on("click", "*", _Events_Click__WEBPACK_IMPORTED_MODULE_0__.default);
+    $('select').on('change', _Events_Click__WEBPACK_IMPORTED_MODULE_0__.default);
     (0,_Context__WEBPACK_IMPORTED_MODULE_2__.enableKeyboardShortcuts)();
     (0,_Mutation__WEBPACK_IMPORTED_MODULE_3__.initializeMutationObserver)();
   },

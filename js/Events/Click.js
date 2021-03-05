@@ -23,6 +23,12 @@ export default function click(event) {
             return;
         }
         target = "'" + target.trim().replace("'", "\\'") + "'";
+    } else if (tagName == 'SELECT') {
+        action = "click";
+        var target = event.currentTarget.name;
+
+        target = "'" + target.trim().replace("'", "\\'") + "'";
+
     } else if (tagName == "INPUT") {
         let ignoreType = [
             "text",
@@ -43,11 +49,30 @@ export default function click(event) {
         return;
     }
 
-    let label = event.target.labels?.[0];
+    if (tagName === 'SELECT') {
+        targetMeta.label = event.currentTarget.value;
 
-    if (label) {
-        targetMeta.label = label.innerText;
+        var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
+        var lastAction = testingOutput[testingOutput.length - 1];
+
+        // In case the latest action was the same select, we don't want to add a new one,
+        // just change the target meta on the previous one.
+        if (lastAction && lastAction.tag == tagName.toLowerCase() && lastAction.target == target) {
+            lastAction.targetMeta = targetMeta;
+
+            sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
+
+            return;
+        }
+
+    } else {
+        let label = event.target.labels?.[0];
+
+        if (label) {
+            targetMeta.label = label.innerText;
+        }
     }
+
 
     MagicTest.addData({
         action: action,
