@@ -1,25 +1,25 @@
 <?php
 
-namespace MagicTest\MagicTest\Commands;
+namespace MagicTest\MagicTest\ShellCommands;
 
 use MagicTest\MagicTest\MagicTestManager;
 use Psy\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Finish extends Command
+class Ok extends Command
 {
     protected function configure()
     {
-        $this->setName('finish')
+        $this->setName('ok')
             ->setDefinition([]);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $actionOutput = (new MagicTestManager)->finish();
+        $scriptOutput = (new MagicTestManager)->runScripts();
 
-        $output->write("<info>{$actionOutput}</info>", true);
+        $output->write("<info>{$scriptOutput}</info>", true);
 
         return 0;
     }

@@ -5,9 +5,9 @@ namespace MagicTest\MagicTest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
-use MagicTest\MagicTest\Commands\Finish;
-use MagicTest\MagicTest\Commands\Ok;
 use MagicTest\MagicTest\Grammar\Grammar;
+use MagicTest\MagicTest\ShellCommands\Finish;
+use MagicTest\MagicTest\ShellCommands\Ok;
 use Psy\Configuration;
 use Psy\Shell;
 use Spatie\Backtrace\Backtrace;
@@ -73,7 +73,7 @@ class MagicTestManager
             (new FileEditor)->finish($content, $method)
         );
 
-        return 'Your magic session has finished. See you later!';
+        return 'Your Magic Test session has finished. See you later!';
     }
 
     public function buildTest(Collection $grammar): void
