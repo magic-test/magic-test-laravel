@@ -60,7 +60,7 @@ class MagicTestManager
 
         $browser->script('MagicTest.clear()');
 
-        return $grammar->count() . " new " . Str::plural('action', $grammar->count()) . ($grammar->count() > 1 ? 'were' : 'was') . " added to ". MagicTest::$file . "::" . MagicTest::$method;
+        return $grammar->count() . " new " . Str::plural('action', $grammar->count()) . ($grammar->count() > 1 ? ' were' : ' was') . " added to ". MagicTest::$file . "::" . MagicTest::$method;
     }
 
     public function finish(): string

@@ -19,7 +19,7 @@ class Ok extends Command
     {
         $scriptOutput = (new MagicTestManager)->runScripts();
 
-        $output->write('<info>' . $scriptOutput . '</info>', true);
+        $output->write("<info>{$scriptOutput}</info>", true);
 
         return 0;
     }
