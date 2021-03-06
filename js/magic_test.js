@@ -1,49 +1,45 @@
-import ClickFunction from './Events/Click';
-import KeypressFunction from './Events/Keypress';
-import { enableKeyboardShortcuts } from './Context';
-import { initializeMutationObserver, mutationStart, mutationEnd } from './Mutation';
-
-function initializeStorage() {
-    if (sessionStorage.getItem("testingOutput") == null) {
-        MagicTest.clear();
-    }
-}
-
-$(function () {
-    console.log("Magic Test started");
-    initializeStorage();
-});
-
+import ClickFunction from "./Events/Click";
+import KeypressFunction from "./Events/Keypress";
+import { enableKeyboardShortcuts } from "./Context";
+import {
+    initializeMutationObserver,
+    mutationStart,
+    mutationEnd,
+} from "./Mutation";
 
 window.MagicTest = {
     start() {
-        if (! this.running()) {
+        if (!this.running()) {
             return;
         }
 
         document.addEventListener("keypress", KeypressFunction);
-        document.addEventListener('mouseover', mutationStart, true);
-        document.addEventListener('mouseover', mutationEnd, false);   
-        $(document).on("click", "*", ClickFunction);
-        $('select').on('change', ClickFunction);
+        document.addEventListener("mouseover", mutationStart, true);
+        document.addEventListener("mouseover", mutationEnd, false);
+        document.addEventListener("click", ClickFunction);
+        document.addEventListener('change', (event) => {
+            if (event.target.tagName === 'SELECT') {
+                ClickFunction(event)
+            }
+        });
+        // $("select").on("change", ClickFunction);
         enableKeyboardShortcuts();
         initializeMutationObserver();
     },
     run() {
-        if (sessionStorage.getItem('magicTestRunning') == null) {
-            sessionStorage.setItem('magicTestRunning', true);
+        if (sessionStorage.getItem("magicTestRunning") == null) {
+            sessionStorage.setItem("magicTestRunning", true);
             this.start();
         }
     },
     running() {
-        return sessionStorage.getItem('magicTestRunning') != null;
+        return sessionStorage.getItem("magicTestRunning") != null;
     },
 
     getData() {
         return sessionStorage.getItem("testingOutput") || {};
     },
-    formattedData()
-    {
+    formattedData() {
         return JSON.parse(this.getData());
     },
     addData(data) {
@@ -55,9 +51,28 @@ window.MagicTest = {
     },
     clear() {
         sessionStorage.setItem("testingOutput", JSON.stringify([]));
-    }
+    },
 };
 
-$(function() {
+function ready(fn) {
+    if (document.readyState !== "loading") {
+        fn();
+    } else {
+        document.addEventListener("DOMContentLoaded", fn);
+    }
+}
+
+function initializeStorage() {
+    if (sessionStorage.getItem("testingOutput") == null) {
+        MagicTest.clear();
+    }
+}
+
+
+
+ready(() => {
+    console.log("Magic Test started");
+    initializeStorage();
     MagicTest.start();
 });
+

@@ -71,8 +71,8 @@ __webpack_require__.r(__webpack_exports__);
 
 function click(event) {
   console.log(event);
-  var tagName = event.currentTarget.tagName;
-  var classList = event.currentTarget.classList;
+  var tagName = event.target.tagName;
+  var classList = event.target.classList;
   var action = "";
   var target = "";
   var options = "";
@@ -81,9 +81,9 @@ function click(event) {
     type: event.target.type || null
   };
 
-  if (tagName == "BUTTON" || tagName == "A" || tagName == "INPUT" && event.currentTarget.type == "submit") {
+  if (tagName == "BUTTON" || tagName == "A" || tagName == "INPUT" && event.target.type == "submit") {
     action = "click";
-    var target = event.currentTarget.value || event.currentTarget.text || event.currentTarget.innerText;
+    var target = event.target.value || event.target.text || event.target.innerText;
 
     if (!target) {
       return;
@@ -92,26 +92,27 @@ function click(event) {
     target = "'" + target.trim().replace("'", "\\'") + "'";
   } else if (tagName == 'SELECT') {
     action = "click";
-    var target = event.currentTarget.name;
+    var target = event.target.name;
     target = "'" + target.trim().replace("'", "\\'") + "'";
   } else if (tagName == "INPUT") {
     var ignoreType = ["text", "password", "date", "email", "month", "number", "search"];
 
-    if (ignoreType.includes(event.currentTarget.type)) {
+    if (ignoreType.includes(event.target.type)) {
       return;
     }
 
-    var path = (0,_Finders__WEBPACK_IMPORTED_MODULE_0__.getPathTo)(event.currentTarget);
-    target = event.currentTarget.name;
+    var path = (0,_Finders__WEBPACK_IMPORTED_MODULE_0__.getPathTo)(event.target);
+    target = event.target.name;
     action = "click";
   } else {
     return;
   }
 
   if (tagName === 'SELECT') {
-    targetMeta.label = event.currentTarget.value;
+    targetMeta.label = event.target.value;
     var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
-    var lastAction = testingOutput[testingOutput.length - 1];
+    var lastAction = testingOutput[testingOutput.length - 1]; // In case the latest action was the same select, we don't want to add a new one,
+    // just change the target meta on the previous one.
 
     if (lastAction && lastAction.tag == tagName.toLowerCase() && lastAction.target == target) {
       lastAction.targetMeta = targetMeta;
@@ -382,17 +383,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-function initializeStorage() {
-  if (sessionStorage.getItem("testingOutput") == null) {
-    MagicTest.clear();
-  }
-}
-
-$(function () {
-  console.log("Magic Test started");
-  initializeStorage();
-});
 window.MagicTest = {
   start: function start() {
     if (!this.running()) {
@@ -400,21 +390,26 @@ window.MagicTest = {
     }
 
     document.addEventListener("keypress", _Events_Keypress__WEBPACK_IMPORTED_MODULE_1__.default);
-    document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationStart, true);
-    document.addEventListener('mouseover', _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationEnd, false);
-    $(document).on("click", "*", _Events_Click__WEBPACK_IMPORTED_MODULE_0__.default);
-    $('select').on('change', _Events_Click__WEBPACK_IMPORTED_MODULE_0__.default);
+    document.addEventListener("mouseover", _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationStart, true);
+    document.addEventListener("mouseover", _Mutation__WEBPACK_IMPORTED_MODULE_3__.mutationEnd, false);
+    document.addEventListener("click", _Events_Click__WEBPACK_IMPORTED_MODULE_0__.default);
+    document.addEventListener('change', function (event) {
+      if (event.target.tagName === 'SELECT') {
+        (0,_Events_Click__WEBPACK_IMPORTED_MODULE_0__.default)(event);
+      }
+    }); // $("select").on("change", ClickFunction);
+
     (0,_Context__WEBPACK_IMPORTED_MODULE_2__.enableKeyboardShortcuts)();
     (0,_Mutation__WEBPACK_IMPORTED_MODULE_3__.initializeMutationObserver)();
   },
   run: function run() {
-    if (sessionStorage.getItem('magicTestRunning') == null) {
-      sessionStorage.setItem('magicTestRunning', true);
+    if (sessionStorage.getItem("magicTestRunning") == null) {
+      sessionStorage.setItem("magicTestRunning", true);
       this.start();
     }
   },
   running: function running() {
-    return sessionStorage.getItem('magicTestRunning') != null;
+    return sessionStorage.getItem("magicTestRunning") != null;
   },
   getData: function getData() {
     return sessionStorage.getItem("testingOutput") || {};
@@ -431,7 +426,24 @@ window.MagicTest = {
     sessionStorage.setItem("testingOutput", JSON.stringify([]));
   }
 };
-$(function () {
+
+function ready(fn) {
+  if (document.readyState !== "loading") {
+    fn();
+  } else {
+    document.addEventListener("DOMContentLoaded", fn);
+  }
+}
+
+function initializeStorage() {
+  if (sessionStorage.getItem("testingOutput") == null) {
+    MagicTest.clear();
+  }
+}
+
+ready(function () {
+  console.log("Magic Test started");
+  initializeStorage();
   MagicTest.start();
 });
 })();
