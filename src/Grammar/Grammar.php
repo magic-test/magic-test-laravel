@@ -59,6 +59,11 @@ class Grammar
         return trim($string);
     }
 
+    public function trim(string $property): string
+    {
+        return trim($this->{$property});
+    }
+
     public function hasTargetType(string $type): bool
     {
         return Arr::get($this->targetMeta, 'type') === $type;
