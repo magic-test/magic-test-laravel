@@ -70,6 +70,11 @@ class Line
         return empty(trim($this->content));
     }
 
+    public function isMethodEnding(): bool
+    {
+        return Str::endsWith($this->content, "')");
+    }
+
     public function final(): self
     {
         $this->content .= ';';

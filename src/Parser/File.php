@@ -116,12 +116,25 @@ class File
         );
     }
 
-    public function addContentAfterLine(Line $referenceLine, Line $newLine, $final = false): void
+    public function addContentAfterLine(Line $referenceLine, Line $newLine, $final = false, $methodCallsOnly = false): void
     {
-        $this->lines = $this->lines->map(function (Line $line, $key) use ($referenceLine, $newLine, $final) {
-            if ($line !== $referenceLine) {
+        // There is an edge case where an "assertSee" method may have more than one line.
+        // The issue is figuring out where to stop... so when the output() method is
+        // called, we pass "methodCallsOnly" as true to try and find the correct
+        // ending line of that method call, by checking if it ends on );
+        // instead of just picking the refrence line.
+        $desiredLine = $this->lines->skipUntil(function (Line $line, $key) use ($referenceLine, $newLine, $final) {
+            return $line === $referenceLine;
+        })->first(function (Line $line, $key) use ($methodCallsOnly) {
+            return $methodCallsOnly ? $line->isMethodEnding() : true;
+        });
+
+
+        $this->lines = $this->lines->map(function (Line $line, $key) use ($desiredLine, $newLine, $final) {
+            if ($line !== $desiredLine) {
                 return $line;
             }
+            
 
             if ($final) {
                 $newLine->final();
@@ -186,6 +199,7 @@ class File
 
         $this->fixBreakpoint();
         $this->addNecessaryPausesToLines();
+        $this->removeDuplicatePauses();
 
         return tap(
             $this->lines
@@ -208,7 +222,18 @@ class File
             $previousLine = $this->previousLineTo($line);
 
             if ($previousLine->requiresPause()) {
-                $this->addContentAfterLine($previousLine, Line::pause());
+                $this->addContentAfterLine($previousLine, Line::pause(), false, true);
+            }
+        });
+    }
+
+    public function removeDuplicatePauses(): void
+    {
+        $this->forEachTestLine(function ($line) {
+            $previousLine = $this->previousLineTo($line);
+
+            if ($previousLine->isPause() && $line->isPause()) {
+                $this->removeLine($line);
             }
         });
     }

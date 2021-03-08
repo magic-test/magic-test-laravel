@@ -60,6 +60,9 @@ class FileEditor
             return;
         });
 
+
+        // eval(\Psy\sh());
+
         return $file->output();
     }
 
