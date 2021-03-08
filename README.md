@@ -53,7 +53,7 @@ For the Magic Experience™️, we suggest you organize the three windows to fit
 Once the browser is open, Magic Test will already be capturing all of your actions. You can click around, fill inputs, checkboxes, selects and radios just like you would do manually testing an application.   
 
 ## Generating Assertions  
-Additionally, you can generate text assertions by selecting a given text and then pressing `CTRL` + `SHIFT` + `A`. You'll see a dialog box confirming the assertion has been recorded.  
+Additionally, you can generate text assertions by selecting a given text and then pressing <kbd>Control</kbd><kbd>Shift</kbd> + <kbd>A</kbd>. You'll see a dialog box confirming the assertion has been recorded.  
 
 ## Saving the new actions to the test file   
 To save the actions that were recorded, simply go to the Shell and type `ok`. You are free to close it and come back to your Magic Sessiona any time, or just keep recording more actions.  
