@@ -1,60 +1,65 @@
-# Use Magic Test with Laravel
+# Magic Test for Laravel
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/mateusjatenee/magic-test-laravel.svg?style=flat-square)](https://packagist.org/packages/mateusjatenee/magic-test-laravel)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/mateusjatenee/magic-test-laravel/run-tests?label=tests)](https://github.com/mateusjatenee/magic-test-laravel/actions?query=workflow%3ATests+branch%3Amaster)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/mateusjatenee/magic-test-laravel/Check%20&%20fix%20styling?label=code%20style)](https://github.com/mateusjatenee/magic-test-laravel/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amaster)
-[![Total Downloads](https://img.shields.io/packagist/dt/mateusjatenee/magic-test-laravel.svg?style=flat-square)](https://packagist.org/packages/mateusjatenee/magic-test-laravel)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/magic-test/magic-test-laravel.svg?style=flat-square)](https://packagist.org/packages/magic-test/magic-test-laravel)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/magic-test/magic-test-laravel/run-tests?label=tests)](https://github.com/magic-test/magic-test-laravel/actions?query=workflow%3ATests+branch%3Amaster)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/magic-test/magic-test-laravel/Check%20&%20fix%20styling?label=code%20style)](https://github.com/magic-test/magic-test-laravel/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amaster)
+[![Total Downloads](https://img.shields.io/packagist/dt/magic-test/magic-test-laravel.svg?style=flat-square)](https://packagist.org/packages/magic-test/magic-test-laravel)
 
+Magic Test allows you to write browser tests by simply clicking around on the application being tested, all without the slowness of constantly restarting the testing environment.  
+It inverts the test-writing experience and avoids all the back and forth between tests, your terminal and your template files. See it in action here.
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+Magic Test was originally created by [Andrew Culver](http://twitter.com/andrewculver) and [Adam Pallozi](https://twitter.com/adampallozzi) for Ruby on Rails.   
+Laravel Magic Test was created by [Mateus Guimarães](https://twitter.com/mateusjatenee).  
 
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/package-magic-test-laravel-laravel.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/package-magic-test-laravel-laravel)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+> Magic Test is still in early development, and that includes the documentation. Any questions you have that aren't already address in the documentation should be opened as issues so they can be appropriately addressed in the documentation.
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require mateusjatenee/magic-test-laravel
+composer require magic-test/magic-test-laravel
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --provider="Mateusjatenee\MagicTest\MagicTestServiceProvider" --tag="magic-test-laravel-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-```bash
-php artisan vendor:publish --provider="Mateusjatenee\MagicTest\MagicTestServiceProvider" --tag="magic-test-laravel-config"
-```
-
-This is the contents of the published config file:
+Then, add the following line to your `$middleware` array under `app/Http/Kernel.php`:   
 
 ```php
-return [
-];
-```
+\MagicTest\MagicTest\Middleware\MagicTestMiddleware::class
+```  
 
-## Usage
+## Usage   
+On your Laravel Dusk tests, simply add `magic()` at the end of your method chain. For example:  
 
 ```php
-$magic-test-laravel = new Mateusjatenee\MagicTest();
-echo $magic-test-laravel->echoPhrase('Hello, Mateusjatenee!');
-```
+    public function testBasicExample()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/')
+                    ->magic();
+        });
+    }
+```    
 
-## Testing
+To run Magic Test, you must simply run the command `php artisan magic`. Behind the scenes, it is the same as running `php artisan dusk`, but it will maintain the browser window open.  
 
-```bash
-composer test
-```
+This will leave you with two or three windows:  
+- The browser
+- An interactive Shell
+- Your text editor if you had it open    
+
+For the Magic Experience™️, we suggest you organize the three windows to fit your screen. That way, you can see tests being generated in real-time.
+
+## Recording Actions  
+Once the browser is open, Magic Test will already be capturing all of your actions. You can click around, fill inputs, checkboxes, selects and radios just like you would do manually testing an application.   
+
+## Generating Assertions  
+Additionally, you can generate text assertions by selecting a given text and then pressing `CTRL` + `SHIFT` + `A`. You'll see a dialog box confirming the assertion has been recorded.  
+
+## Saving the new actions to the test file   
+To save the actions that were recorded, simply go to the Shell and type `ok`. You are free to close it and come back to your Magic Sessiona any time, or just keep recording more actions.  
+If you're satisfied with your test, you can type `finish` on the Shell and it'll remove the `magic()` call from your test, leaving you with a clean, working test.  
+
+Magic Test is still in it's early days, so you might find that the output is not exactly what you wanted. In that case, [feel free to submit an issue](https://github.com/magic-test/magic-test-laravel/issues/new) and we'll try to improve it ASAP.
 
 ## Changelog
 
@@ -70,7 +75,9 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Mateus Guimarães](https://github.com/mateusjatenee)
+- [Mateus Guimarães](https://twitter.com/mateusjatenee)
+- [Andrew Culver](http://twitter.com/andrewculver)
+- [Mateus Guimarães](https://twitter.com/adampallozzi)
 - [All Contributors](../../contributors)
 
 ## License
