@@ -5,6 +5,7 @@ namespace MagicTest\MagicTest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use MagicTest\MagicTest\Grammar\Click;
+use MagicTest\MagicTest\Grammar\Fill;
 use MagicTest\MagicTest\Grammar\Grammar;
 use MagicTest\MagicTest\Parser\File;
 use MagicTest\MagicTest\Parser\Line;
@@ -80,6 +81,10 @@ class FileEditor
             $needsPause = ($grammar instanceof Click && in_array($grammar->tag, ['a', 'button']));
 
             $text = [new Line($grammar->build())];
+
+            if ($grammar instanceof Fill && $grammar->isLivewire()) {
+                $text[] = Line::pause();
+            }
 
             return $text;
         })->flatten();

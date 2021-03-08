@@ -69,6 +69,11 @@ class Grammar
         return Arr::get($this->targetMeta, 'type') === $type;
     }
 
+    public function isLivewire(): bool
+    {
+        return Arr::get($this->targetMeta, 'isLivewire') === true;
+    }
+
     public static function for(array $command)
     {
         $types = [

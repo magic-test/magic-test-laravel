@@ -155,12 +155,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ keypress)
 /* harmony export */ });
 function keypress(event) {
+  console.log(event);
   event = event || window.event;
   var charCode = event.keyCode || event.which;
   var name = event.target.name;
   var tagName = '';
   var classList = '';
   var charStr = String.fromCharCode(charCode);
+  var attributes = event.target.attributes; // console.log(attributes, Object.values(attributes));
+
+  var isLivewire = Array.from(attributes).filter(function (attribute) {
+    return attribute.nodeName.includes('wire:');
+  }).length > 0;
 
   if (!event.target.labels) {
     return;
@@ -185,7 +191,10 @@ function keypress(event) {
       target: "'".concat(name, "'"),
       options: options,
       classList: classList,
-      tag: tagName.toLowerCase()
+      tag: tagName.toLowerCase(),
+      targetMeta: {
+        isLivewire: isLivewire
+      }
     });
   }
 

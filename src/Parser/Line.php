@@ -50,6 +50,11 @@ class Line
         return Str::contains($this->content, ['click(', 'clickLink(', 'press(']);
     }
 
+    public function isType(): bool
+    {
+        return Str::contains($this->content, 'type(');
+    }
+
     public function isVisit(): bool
     {
         return Str::contains($this->content, 'visit(');
@@ -82,6 +87,11 @@ class Line
     public function isFinal(): bool
     {
         return Str::endsWith($this->content, ';');
+    }
+
+    public function requiresPause(): bool
+    {
+        return $this->isClickOrPress() && ! $this->isPause();
     }
 
     public function __toString(): string

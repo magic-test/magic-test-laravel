@@ -1,10 +1,16 @@
 export default function keypress(event) {
+    console.log(event);
     event = event || window.event;
     var charCode = event.keyCode || event.which;
     var name = event.target.name;
     var tagName = '';
     var classList = '';
     var charStr = String.fromCharCode(charCode);
+    let attributes = event.target.attributes;
+
+    // console.log(attributes, Object.values(attributes));
+    let isLivewire = Array.from(attributes).filter((attribute) => attribute.nodeName.includes('wire:')).length > 0;
+
     if (!event.target.labels) {
         return;
     }
@@ -28,7 +34,10 @@ export default function keypress(event) {
             target: `'${name}'`,
             options: options,
             classList: classList,
-            tag: tagName.toLowerCase()
+            tag: tagName.toLowerCase(),
+            targetMeta: {
+                isLivewire: isLivewire
+            }
         });
     }
     sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
