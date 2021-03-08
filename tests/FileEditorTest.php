@@ -4,6 +4,7 @@ namespace MagicTest\MagicTest\Tests;
 
 use MagicTest\MagicTest\FileEditor;
 use MagicTest\MagicTest\Grammar\Click;
+use MagicTest\MagicTest\Grammar\Fill;
 use MagicTest\MagicTest\Grammar\See;
 
 class FileEditorTest extends TestCase
@@ -69,6 +70,29 @@ class FileEditorTest extends TestCase
 
         $grammar = collect([
             new Click('', "'Mateus'", [], [], 'button'),
+        ]);
+
+        $processedText = (new FileEditor)->process($input, $grammar, 'testBasicExample');
+        $this->assertEquals($expectedOutput, $processedText);
+    }
+
+    /** @test */
+    public function it_properly_adds_fills_to_a_livewire_test()
+    {
+        $input = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentAndLivewireInput.example');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentAndLivewireOutput.example');
+
+        $grammar = collect([
+            new Fill('', 'name', [
+                'text' => "'Mateus'",
+            ], [], 'button', [
+                'isLivewire' => true,
+            ]),
+            new Fill('', 'email', [
+                'text' => "'mateus@mateusguimaraes.com'",
+            ], [], 'button', [
+                'isLivewire' => true,
+            ]),
         ]);
 
         $processedText = (new FileEditor)->process($input, $grammar, 'testBasicExample');
