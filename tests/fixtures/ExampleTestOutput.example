@@ -25,7 +25,7 @@ class ExampleTest extends DuskTestCase
                     ->pause(500)
                     ->assertSee('Mateus');
 
-            MagicTestManager::run($browser);
+            magic_test($browser);
         });
     }
 }

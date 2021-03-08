@@ -20,7 +20,7 @@ class ExampleTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $browser->visit('/');
 
-            MagicTestManager::run($browser);
+            magic_test($browser);
         });
     }
 }

@@ -22,7 +22,7 @@ class ExampleTest extends DuskTestCase
                     ->assertSee('Laravel')
                     ->clickLink('Log in');
 
-            MagicTestManager::run($browser);
+            magic_test($browser);
         });
     }
 }

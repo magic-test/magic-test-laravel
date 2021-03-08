@@ -24,7 +24,7 @@ class ExampleTest extends DuskTestCase
                     ->clickLink('Forgot your password?')
                     ->assertSee('Mateus');
 
-            MagicTestManager::run($browser);
+            magic_test($browser);
         });
     }
 }
