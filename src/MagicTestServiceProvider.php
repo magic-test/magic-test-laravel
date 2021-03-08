@@ -20,9 +20,6 @@ class MagicTestServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('magic-test-laravel')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_magic_test_laravel_table')
             ->hasCommand(MagicTestCommand::class);
     }
 
