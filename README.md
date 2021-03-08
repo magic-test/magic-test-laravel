@@ -6,7 +6,8 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/magic-test/magic-test-laravel.svg?style=flat-square)](https://packagist.org/packages/magic-test/magic-test-laravel)
 
 Magic Test allows you to write browser tests by simply clicking around on the application being tested, all without the slowness of constantly restarting the testing environment.  
-It inverts the test-writing experience and avoids all the back and forth between tests, your terminal and your template files. See it in action here.
+It inverts the test-writing experience and avoids all the back and forth between tests, your terminal and your template files. See it in action here.  
+The easiest way to explain Magic Test is through a video. [Check it out here](https://twitter.com/mateusjatenee/status/1368905554790334464).
 
 Magic Test was originally created by [Andrew Culver](http://twitter.com/andrewculver) and [Adam Pallozi](https://twitter.com/adampallozzi) for Ruby on Rails.   
 Laravel Magic Test was created by [Mateus Guimarães](https://twitter.com/mateusjatenee).  
@@ -58,6 +59,8 @@ Additionally, you can generate text assertions by selecting a given text and the
 ## Saving the new actions to the test file   
 To save the actions that were recorded, simply go to the Shell and type `ok`. You are free to close it and come back to your Magic Sessiona any time, or just keep recording more actions.  
 If you're satisfied with your test, you can type `finish` on the Shell and it'll remove the `magic()` call from your test, leaving you with a clean, working test.  
+
+See how it works [on this video](https://twitter.com/mateusjatenee/status/1368905554790334464)
 
 Magic Test is still in it's early days, so you might find that the output is not exactly what you wanted. In that case, [feel free to submit an issue](https://github.com/magic-test/magic-test-laravel/issues/new) and we'll try to improve it ASAP.
 
