@@ -77,7 +77,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 - [Mateus Guimarães](https://twitter.com/mateusjatenee)
 - [Andrew Culver](http://twitter.com/andrewculver)
-- [Mateus Guimarães](https://twitter.com/adampallozzi)
+- [Adam Pallozzi](https://twitter.com/adampallozzi)
 - [All Contributors](../../contributors)
 
 ## License
