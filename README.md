@@ -6,7 +6,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/magic-test/magic-test-laravel.svg?style=flat-square)](https://packagist.org/packages/magic-test/magic-test-laravel)
 
 Magic Test allows you to write browser tests by simply clicking around on the application being tested, all without the slowness of constantly restarting the testing environment.  
-It inverts the test-writing experience and avoids all the back and forth between tests, your terminal and your template files. See it in action here.  
+It inverts the test-writing experience and avoids all the back and forth between tests, your terminal and your template files. [See it in action here.](https://twitter.com/mateusjatenee/status/1368905554790334464)  
 The easiest way to explain Magic Test is through a video. [Check it out here](https://twitter.com/mateusjatenee/status/1368905554790334464).
 
 Magic Test was originally created by [Andrew Culver](http://twitter.com/andrewculver) and [Adam Pallozi](https://twitter.com/adampallozzi) for Ruby on Rails.   
