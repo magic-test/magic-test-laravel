@@ -3,16 +3,17 @@ import KeypressFunction from './Events/Keypress';
 import { enableKeyboardShortcuts } from './Context';
 import { initializeMutationObserver, mutationStart, mutationEnd } from './Mutation';
 
+if(! window.jQuery){
+    let $ = require('jquery');
+    window.jQuery = $;
+    window.$ = $;
+}
+
 function initializeStorage() {
     if (sessionStorage.getItem("testingOutput") == null) {
         MagicTest.clear();
     }
 }
-
-$(function () {
-    console.log("Magic Test started");
-    initializeStorage();
-});
 
 
 window.MagicTest = {
@@ -58,6 +59,16 @@ window.MagicTest = {
     }
 };
 
-$(function() {
+function ready(fn) {
+    if (document.readyState !== "loading" || ! window.jQuery) {
+      fn();
+    } else {
+      document.addEventListener("DOMContentLoaded", fn);
+    }
+  }
+  
+ready(() => {
+    console.log("Magic Test started");
+    initializeStorage();
     MagicTest.start();
 });

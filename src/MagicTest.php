@@ -47,7 +47,6 @@ class MagicTest
 
         // HTML Label.
         $html = ['<!-- Magic Test Scripts -->'];
-        $html[] = '<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>';
         // JavaScript assets.
         $html[] = '<script>';
         $html[] = config('app.debug') ? $script : self::minify($scripts);
