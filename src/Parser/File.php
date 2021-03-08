@@ -29,7 +29,7 @@ class File
 
     public ?Line $lastLineAdded;
 
-    protected array $possibleMethods = ['MagicTestManager::run', 'magic_test', 'magic', 'm('];
+    protected array $possibleMethods = ['magic_test', '->magic()'];
 
     public function __construct(string $content, string $method)
     {

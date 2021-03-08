@@ -72,9 +72,9 @@ class FileEditor
         return Str::contains(trim((string) $line), trim($firstAction));
     }
 
-    protected function buildGrammar(Collection $grammars, $endsWithMacro = false): Collection
+    protected function buildGrammar(Collection $grammars): Collection
     {
-        return $grammars->map(function (Grammar $grammar) use ($grammars, $endsWithMacro) {
+        return $grammars->map(function (Grammar $grammar) use ($grammars) {
             $isLast = $grammar === $grammars->last();
 
             $needsPause = ($grammar instanceof Click && in_array($grammar->tag, ['a', 'button']));
@@ -82,8 +82,6 @@ class FileEditor
             $text = [new Line($grammar->build())];
 
             return $text;
-
-            return implode("\n", $text);
         })->flatten();
     }
 

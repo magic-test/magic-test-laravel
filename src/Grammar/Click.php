@@ -27,6 +27,7 @@ class Click extends Grammar
         return [
             'a' => "->clickLink({$this->target})",
             'button' => "->press({$this->target})",
+            'div' => "->press({$this->target})",
             'default' => "->click({$this->target})",
         ][$this->tag] ?? "->click({$this->target})";
     }
