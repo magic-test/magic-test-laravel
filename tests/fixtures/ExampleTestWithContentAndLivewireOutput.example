@@ -21,11 +21,11 @@ class ExampleTest extends DuskTestCase
             $browser->visit('/')
                     ->assertSee('Laravel')
                     ->clickLink('Log in')
-                    ->pause(500)
+                    ->pause(200)
                     ->type('name', 'Mateus')
-                    ->pause(500)
+                    ->pause(200)
                     ->type('email', 'mateus@mateusguimaraes.com')
-                    ->pause(500)
+                    ->pause(200)
                     ->magic();
         });
     }

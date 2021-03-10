@@ -34,12 +34,19 @@ class GrammarBuilderVisitor extends NodeVisitorAbstract
         
         // if the last item of a grammar is a pause, it is unnecessary because
         // right now we are in the "magic" call node, so we remove it.
-        if ($grammar->last() instanceof Pause) {
+        // That happens unless the second to last grammar is a Livewire field.
+        // In that case we have to add an extra pause regardless.
+        $lastGrammar = $grammar->last();
+        $secondToLastGrammar = $grammar->count() > 1 ? $grammar[$grammar->count() - 2] : null;
+        if (
+            $grammar->last() instanceof Pause &&
+            ! $secondToLastGrammar->isLivewire()
+        ) {
             $grammar->pop();
         }
 
         // If the previous method was a method
-        // that needs a pause,we add it here.
+        // that needs a pause, we prepend it.
         if (in_array($previousMethod->name->__toString(), [
             'clickLink', 'press'
         ])) {
@@ -69,8 +76,8 @@ class GrammarBuilderVisitor extends NodeVisitorAbstract
     public function getPreviousMethodInChain(Node $node): Expr
     {
         $parentExpression = $node->getAttribute('parent')->expr;
-        // now we get the first var, which *should* be the previous method.
 
+        // now we return the first var, which *should* be the previous method.
         return $parentExpression->var;
     }
 }
