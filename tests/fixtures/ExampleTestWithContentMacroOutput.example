@@ -21,9 +21,9 @@ class ExampleTest extends DuskTestCase
             $browser->visit('/')
                     ->assertSee('Laravel')
                     ->clickLink('Log in')
-                    ->pause(500)
+                    ->pause(200)
                     ->clickLink('Forgot your password?')
-                    ->pause(500)
+                    ->pause(200)
                     ->assertSee('Mateus')
                     ->magic();
         });

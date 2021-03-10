@@ -27,7 +27,7 @@ class ExampleTest extends DuskTestCase
                     ->type('password_confirmation', 'password')
                     ->radio('input[name=some_radio]', 'Option 1')
                     ->press('REGISTER')
-                    ->pause(500)
+                    ->pause(200)
                     ->press('Mateus')
                     ->magic();
         });

@@ -19,6 +19,8 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\NodeVisitor\CloningVisitor;
+use PhpParser\NodeVisitor\NodeConnectingVisitor;
+use PhpParser\NodeVisitor\ParentConnectingVisitor;
 
 class PhpFile
 {
@@ -74,14 +76,11 @@ class PhpFile
 
 
         $traverser = new NodeTraverser;
+        $traverser->addVisitor(new ParentConnectingVisitor);
         $traverser->addVisitor(new GrammarBuilderVisitor($grammar));
+        // $traverser->addVisitor(new PauseAdderVisitor);
 
-
-        // $traverser->traverse($closure->stmts);
-        $expression = $closure->stmts[0]->expr;
-        // dd($nodeFinder->findFirst($closure->stmts, function($node) {
-        //     return $node instanceof MethodCall && !empty($node->args);
-        // }));
+        // add grammar
         $traverser->traverse($closure->stmts);
     
 
@@ -109,50 +108,5 @@ $prettyPrinter = new CustomPrettyPrinter;
 $newCode = $prettyPrinter->printFormatPreserving($newStmts, $stmts, $oldTokens);
     return $newCode;
 
-        $traverser = new NodeTraverser;
-        $traverser->addVisitor(new class extends NodeVisitorAbstract {
-            public function leaveNode(Node $node) {
-                if ($node instanceof Identifier && $node->name === 'magic') {
-                    return 
-                        new MethodCall(
-                            new Variable('browser'),
-                            'press',
-                            [
-                                new Arg(new String_('Test'))
-                            ]
-                        );
-                }
-            }
-        });
-        $traverser->traverse($class->stmts);
-        dd($class->stmts);
-
-        $classes = collect($stmts)->first(fn($node) => $node instanceof Class_);
-
-        $method = collect($classes->stmts)->first(fn($node) => $node->name->name === $method);
-
-        $expressions = $method->stmts;
-
-        $expression = collect($expressions)->filter(function($expression) {
-            $args = $expression->expr->args;
-
-            collect($args)->filter(function($arg) {
-                dd($arg->value);
-            });
-            
-            return $expression->expr instanceof MethodCall;
-        });
-
-        $modifiedStmts = $traverser->traverse($stmts);
-        dd($modifiedStmts);
-    }
-
-    public function buildNodes($node, $grammar)
-    {
-        dd($grammar);
-                    $node->var = new MethodCall(
-                        $node->var,
-                        'foo'
-                    );
     }
 }
