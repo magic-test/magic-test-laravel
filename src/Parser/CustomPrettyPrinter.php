@@ -15,4 +15,9 @@ class CustomPrettyPrinter extends Standard
 
         return $this->pDereferenceLhs($node->var) . $this->nl . $call;
     }
+
+    protected function pMaybeMultiline(array $nodes, bool $trailingComma = false)
+    {
+        return parent::pMaybeMultiline($nodes, $trailingComma);
+    }
 }
