@@ -5,6 +5,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use Illuminate\Support\Collection;
 use MagicTest\MagicTest\Grammar\Pause;
+use PhpParser\Node\Expr;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node\Expr\MethodCall;
 
@@ -15,14 +16,14 @@ class GrammarBuilderVisitor extends NodeVisitorAbstract
         $this->grammar = $grammar;
     }
 
-    public function leaveNode(Node $node)
+    public function leaveNode(Node $node): void
     {
         if ($node instanceof MethodCall && $node->name->__toString() === 'magic') {
             $this->buildNodes($node);
         }  
     }
 
-    public function buildNodes($node)
+    public function buildNodes($node): void
     {
         $previousMethod = $this->getPreviousMethodInChain($node);
         $grammar = $this->grammar
@@ -65,7 +66,7 @@ class GrammarBuilderVisitor extends NodeVisitorAbstract
         return array_map(fn($argument) => new Arg($argument), $arguments);
     }
 
-    public function getPreviousMethodInChain(Node $node)
+    public function getPreviousMethodInChain(Node $node): Expr
     {
         $parentExpression = $node->getAttribute('parent')->expr;
         // now we get the first var, which *should* be the previous method.
