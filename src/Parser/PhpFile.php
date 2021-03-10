@@ -21,6 +21,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\NodeVisitor\CloningVisitor;
 use PhpParser\NodeVisitor\NodeConnectingVisitor;
 use PhpParser\NodeVisitor\ParentConnectingVisitor;
+use MagicTest\MagicTest\Parser\MagicRemoverVisitor;
 
 class PhpFile
 {
@@ -55,58 +56,74 @@ class PhpFile
 
 
         $nodeFinder = new NodeFinder;
-        $class = $nodeFinder->findFirst($newStmts, function(Node $node) use ($method) {
-            return $node instanceof ClassMethod &&
-                   $node->name->__toString() === $method;
-        });
-        // dd($nodeDumper->dump($class->stmts));
+        $class = $nodeFinder->findFirst($newStmts, fn(Node $node) => 
+          $node instanceof ClassMethod && $node->name->__toString() === $method
+        );
+        $methodCall = $nodeFinder->findFirst($class->stmts, fn(Node $node) => $node instanceof MethodCall);
+        $closure = $nodeFinder->findFirst($methodCall->args, fn(Node $node) => $node->value instanceof Closure)->value;
 
-        $methodCall = $nodeFinder->findFirst($class->stmts, function($node) {
-            return $node instanceof MethodCall;
-            if ($node instanceof MethodCall) {
-                var_dump($node);
-            }
-            // return $node instanceof Identifier &&
-                //    $node->name === 'magic';
-        });
-
-        $closure = $nodeFinder->findFirst($methodCall->args, function($node) {
-            return $node->value instanceof Closure;
-        })->value;
 
 
         $traverser = new NodeTraverser;
         $traverser->addVisitor(new ParentConnectingVisitor);
         $traverser->addVisitor(new GrammarBuilderVisitor($grammar));
-        // $traverser->addVisitor(new PauseAdderVisitor);
 
         // add grammar
         $traverser->traverse($closure->stmts);
     
 
-        $magicMethod = $nodeFinder->findFirst($closure->stmts, function (\PhpParser\Node $node) {
-            return $node instanceof \PhpParser\Node\Expr\MethodCall && $node->name == "magic";
-        });
+        $prettyPrinter = new CustomPrettyPrinter;
+        $newCode = $prettyPrinter->printFormatPreserving($newStmts, $stmts, $oldTokens);
+
+        return $newCode;
+    }
+
+    public static function finish(string $content, string $method)
+    {
+        $lexer = new \PhpParser\Lexer\Emulative([
+            'usedAttributes' => [
+                'comments',
+                'startLine', 'endLine',
+                'startTokenPos', 'endTokenPos',
+            ],
+        ]);
+
+        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7, $lexer);
+
+        $ast = collect($parser->parse($content)[0]);
+
+        $stmts = $ast['stmts'];
+
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new CloningVisitor());
+
+
+        $oldTokens = $lexer->getTokens();
+
+
+        $newStmts = $traverser->traverse($stmts);
 
 
 
-        // dd($closure->stmts[0]->expr);
+        $nodeFinder = new NodeFinder;
+
+        $class = $nodeFinder->findFirst($newStmts, fn(Node $node) => 
+          $node instanceof ClassMethod && $node->name->__toString() === $method
+        );
+        $methodCall = $nodeFinder->findFirst($class->stmts, fn(Node $node) => $node instanceof MethodCall);
+        $closure = $nodeFinder->findFirst($methodCall->args, fn(Node $node) => $node->value instanceof Closure)->value;
 
 
+        $traverser = new NodeTraverser;
+        $traverser->addVisitor(new ParentConnectingVisitor);
+        $traverser->addVisitor(new MagicRemoverVisitor);
 
+        // remove finish
+        $traverser->traverse($closure->stmts);
+    
+        $prettyPrinter = new CustomPrettyPrinter;
+        $newCode = $prettyPrinter->printFormatPreserving($newStmts, $stmts, $oldTokens);
 
-
-
-
-        // $traverser->traverse($callbackParse);
-
-
-        // dd($closure->stmts);
-        //Expression::class
-
-$prettyPrinter = new CustomPrettyPrinter;
-$newCode = $prettyPrinter->printFormatPreserving($newStmts, $stmts, $oldTokens);
-    return $newCode;
-
+        return $newCode;
     }
 }

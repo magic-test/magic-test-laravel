@@ -60,7 +60,7 @@ class GrammarBuilderVisitor extends NodeVisitorAbstract
         // (so each method call's var is another method call) instead of them being siblings.
         foreach ($grammar as $gram) {
             $previousNode = clone $node;
-            $node->var = $call = new MethodCall(
+            $node->var  = new MethodCall(
                 $previousNode->var,
                 $gram->nameForParser(),
                 $this->buildArguments($gram->arguments())

@@ -20,15 +20,7 @@ class FileEditor
 
     public function finish(string $content, string $method): string
     {
-        $file = File::fromContent($content, $method);
-
-        if ($file->breakpointLine->isMacroCall()) {
-            $file->previousLineTo($file->breakpointLine)->final();
-        }
-
-        $file->removeLine($file->breakpointLine);
-
-        return $file->freshOutput();
+        return PhpFile::finish($content, $method);
     }
 
     /**
@@ -41,61 +33,6 @@ class FileEditor
      */
     public function process(string $content, Collection $grammar, string $method): string
     {
-        $file = PhpFile::fromContent($content, $method, $grammar);
-        return $file;
-
-        $file->forEachLine(function (Line $line, $key) use ($file, $grammar) {
-            if (! $file->isLastAction($line)) {
-                return;
-            }
-
-            $file->startWritingTest();
-
-            if (! $line->isMacroCall()) {
-                $line->removeSemicolon();
-            }
-
-            $grammar = $this->buildGrammar($grammar, $line->isMacroCall());
-            $file->addTestLines($grammar);
-            $file->stopWritingTest();
-
-            return;
-        });
-
-
-
-        return $file->output();
-    }
-
-    protected function isTestFirstAction(string $line, string $firstAction): bool
-    {
-        return Str::contains(trim($line), trim($firstAction));
-    }
-
-    protected function isTestLastAction(Line $line, string $firstAction): bool
-    {
-        return Str::contains(trim((string) $line), trim($firstAction));
-    }
-
-    protected function buildGrammar(Collection $grammars): Collection
-    {
-        return $grammars->map(function (Grammar $grammar) use ($grammars) {
-            $isLast = $grammar === $grammars->last();
-
-            $needsPause = ($grammar instanceof Click && in_array($grammar->tag, ['a', 'button']));
-
-            $text = [new Line($grammar->build())];
-
-            if ($grammar instanceof Fill && $grammar->isLivewire()) {
-                $text[] = Line::pause();
-            }
-
-            return $text;
-        })->flatten();
-    }
-
-    protected function isClickOrPress($line): bool
-    {
-        return Str::contains($line, ['click', 'clickLink', 'press']);
+        return PhpFile::fromContent($content, $method, $grammar);
     }
 }
