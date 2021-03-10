@@ -8,7 +8,7 @@ use PhpParser\PrettyPrinter\Standard;
 
 class CustomPrettyPrinter extends Standard
 {
-    protected function pExpr_MethodCall(Expr\MethodCall $node)
+    public function pExpr_MethodCall(Expr\MethodCall $node)
     {
         $call = Grammar::indent('->' . $this->pObjectProperty($node->name)
              . '(' . $this->pMaybeMultiline($node->args) . ')', 1);
