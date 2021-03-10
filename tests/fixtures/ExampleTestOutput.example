@@ -20,12 +20,11 @@ class ExampleTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
                     ->clickLink('Log in')
-                    ->pause(500)
+                    ->pause(200)
                     ->clickLink('Forgot your password?')
-                    ->pause(500)
-                    ->assertSee('Mateus');
-
-            magic_test($browser);
+                    ->pause(200)
+                    ->assertSee('Mateus')
+                    ->magic();
         });
     }
 }

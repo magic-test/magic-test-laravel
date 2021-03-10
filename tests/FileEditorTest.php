@@ -27,22 +27,6 @@ class FileEditorTest extends TestCase
         $this->assertEquals($expectedOutput, $processedText);
     }
 
-    /** @test */
-    public function it_properly_replaces_the_content_when_it_has_actions()
-    {
-        $expectedInput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContent.example');
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentOutput.example');
-        
-
-        $grammar = collect([
-            new Click('', "'Forgot your password?'", [], [], 'a'),
-            new See('', "'Mateus'", [], [], 'span'),
-        ]);
-
-        $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
-
-        $this->assertEquals($expectedOutput, $processedText);
-    }
 
     /** @test */
     public function it_properly_parses_a_file_that_uses_the_magic_macro()
