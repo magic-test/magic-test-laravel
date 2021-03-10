@@ -4,7 +4,6 @@ namespace MagicTest\MagicTest\Grammar;
 
 use Illuminate\Support\Arr;
 use PhpParser\Node\Scalar\String_;
-use MagicTest\MagicTest\Grammar\Pause;
 
 class Click extends Grammar
 {
@@ -63,14 +62,14 @@ class Click extends Grammar
 
             return [
                 new String_("input[name={$strippedTagsTarget}]"),
-                new String_($label)
+                new String_($label),
             ];
         } elseif ($this->tag === 'select') {
             $label = Arr::get($this->targetMeta, 'label');
 
             return [
                 new String_(trim($this->target, "'")),
-                new String_($label)
+                new String_($label),
             ];
         }
 
@@ -78,7 +77,7 @@ class Click extends Grammar
         $target = trim($target);
 
         return [
-            new String_($target)
+            new String_($target),
         ];
     }
 

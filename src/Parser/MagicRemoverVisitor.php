@@ -1,14 +1,10 @@
-<?php 
+<?php
 namespace MagicTest\MagicTest\Parser;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
-use PhpParser\NodeTraverser;
-use Illuminate\Support\Collection;
-use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node\Expr\MethodCall;
-use MagicTest\MagicTest\Grammar\Pause;
+use PhpParser\NodeVisitorAbstract;
 
 class MagicRemoverVisitor extends NodeVisitorAbstract
 {
@@ -23,7 +19,7 @@ class MagicRemoverVisitor extends NodeVisitorAbstract
             $node->name = $previousMethod->name;
             $node->var = $previousMethod->var;
             $node->args = $previousMethod->args;
-        }  
+        }
     }
 
     public function getPreviousMethodInChain(Node $node): Expr

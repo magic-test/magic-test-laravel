@@ -27,7 +27,6 @@ class FileEditorTest extends TestCase
         $this->assertEquals($expectedOutput, $processedText);
     }
 
-
     /** @test */
     public function it_properly_parses_a_file_that_uses_the_magic_macro()
     {

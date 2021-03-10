@@ -27,7 +27,7 @@ class See extends Grammar
         $target = trim($target);
 
         return [
-            new String_($target)
+            new String_($target),
         ];
     }
 }

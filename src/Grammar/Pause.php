@@ -2,7 +2,6 @@
 
 namespace MagicTest\MagicTest\Grammar;
 
-use Illuminate\Support\Arr;
 use PhpParser\Node\Scalar\LNumber;
 
 class Pause

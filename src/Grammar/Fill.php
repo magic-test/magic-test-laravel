@@ -20,7 +20,7 @@ class Fill extends Grammar
     {
         return [
             new String_(trim($this->target, "'")),
-            new String_(trim($this->options['text'], "'"))
+            new String_(trim($this->options['text'], "'")),
         ];
     }
 

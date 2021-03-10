@@ -1,10 +1,9 @@
-<?php 
+<?php
 namespace MagicTest\MagicTest\Parser;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
-use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\NodeVisitorAbstract;
 
 class PauseAdderVisitor extends NodeVisitorAbstract
 {
@@ -14,13 +13,13 @@ class PauseAdderVisitor extends NodeVisitorAbstract
             if ($this->requiresPauseAfter($node)) {
                 // dd($node);
             }
-        }  
+        }
     }
 
     public function requiresPauseAfter(Node $node)
     {
         return in_array($node->name->__toString(), [
-            'click', 
+            'click',
         ]);
     }
 }

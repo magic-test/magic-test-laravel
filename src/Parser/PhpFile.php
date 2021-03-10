@@ -3,25 +3,15 @@
 namespace MagicTest\MagicTest\Parser;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\Closure;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\NodeDumper;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
-use PhpParser\ParserFactory;
-use PhpParser\Node\Identifier;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Expr\Closure;
-use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt\Function_;
-use PhpParser\NodeVisitorAbstract;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\NodeVisitor\CloningVisitor;
-use PhpParser\NodeVisitor\NodeConnectingVisitor;
 use PhpParser\NodeVisitor\ParentConnectingVisitor;
-use MagicTest\MagicTest\Parser\MagicRemoverVisitor;
+use PhpParser\ParserFactory;
 
 class PhpFile
 {
@@ -56,11 +46,13 @@ class PhpFile
 
 
         $nodeFinder = new NodeFinder;
-        $class = $nodeFinder->findFirst($newStmts, fn(Node $node) => 
+        $class = $nodeFinder->findFirst(
+            $newStmts,
+            fn (Node $node) =>
           $node instanceof ClassMethod && $node->name->__toString() === $method
         );
-        $methodCall = $nodeFinder->findFirst($class->stmts, fn(Node $node) => $node instanceof MethodCall);
-        $closure = $nodeFinder->findFirst($methodCall->args, fn(Node $node) => $node->value instanceof Closure)->value;
+        $methodCall = $nodeFinder->findFirst($class->stmts, fn (Node $node) => $node instanceof MethodCall);
+        $closure = $nodeFinder->findFirst($methodCall->args, fn (Node $node) => $node->value instanceof Closure)->value;
 
 
 
@@ -107,11 +99,13 @@ class PhpFile
 
         $nodeFinder = new NodeFinder;
 
-        $class = $nodeFinder->findFirst($newStmts, fn(Node $node) => 
+        $class = $nodeFinder->findFirst(
+            $newStmts,
+            fn (Node $node) =>
           $node instanceof ClassMethod && $node->name->__toString() === $method
         );
-        $methodCall = $nodeFinder->findFirst($class->stmts, fn(Node $node) => $node instanceof MethodCall);
-        $closure = $nodeFinder->findFirst($methodCall->args, fn(Node $node) => $node->value instanceof Closure)->value;
+        $methodCall = $nodeFinder->findFirst($class->stmts, fn (Node $node) => $node instanceof MethodCall);
+        $closure = $nodeFinder->findFirst($methodCall->args, fn (Node $node) => $node->value instanceof Closure)->value;
 
 
         $traverser = new NodeTraverser;

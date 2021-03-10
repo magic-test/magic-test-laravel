@@ -3,12 +3,7 @@
 namespace MagicTest\MagicTest;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use MagicTest\MagicTest\Grammar\Click;
-use MagicTest\MagicTest\Grammar\Fill;
 use MagicTest\MagicTest\Grammar\Grammar;
-use MagicTest\MagicTest\Parser\File;
-use MagicTest\MagicTest\Parser\Line;
 use MagicTest\MagicTest\Parser\PhpFile;
 
 class FileEditor
