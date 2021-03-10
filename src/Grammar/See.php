@@ -13,4 +13,20 @@ class See extends Grammar
 
         return "->assertSee({$target})";
     }
+
+    public function nameForParser()
+    {
+        return 'assertSee';
+    }
+
+    public function arguments()
+    {
+        $target = trim($this->target, "'");
+        $target = trim($target);
+
+
+        return [
+            $target
+        ];
+    }
 }

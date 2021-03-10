@@ -9,6 +9,7 @@ use MagicTest\MagicTest\Grammar\Fill;
 use MagicTest\MagicTest\Grammar\Grammar;
 use MagicTest\MagicTest\Parser\File;
 use MagicTest\MagicTest\Parser\Line;
+use MagicTest\MagicTest\Parser\PhpFile;
 
 class FileEditor
 {
@@ -40,7 +41,8 @@ class FileEditor
      */
     public function process(string $content, Collection $grammar, string $method): string
     {
-        $file = File::fromContent($content, $method);
+        $file = PhpFile::fromContent($content, $method, $grammar);
+        dd($file);
 
         $file->forEachLine(function (Line $line, $key) use ($file, $grammar) {
             if (! $file->isLastAction($line)) {
