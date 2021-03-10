@@ -18,6 +18,10 @@ class CustomPrettyPrinter extends Standard
 
     protected function pMaybeMultiline(array $nodes, bool $trailingComma = false)
     {
-        return parent::pMaybeMultiline($nodes, $trailingComma);
+        if (! $this->hasNodeWithComments($nodes)) {
+            return $this->pCommaSeparated($nodes);
+        } else {
+            return $this->pCommaSeparatedMultiline($nodes, $trailingComma) . $this->nl;
+        }
     }
 }
