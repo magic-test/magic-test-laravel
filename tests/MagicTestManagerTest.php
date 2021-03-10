@@ -15,7 +15,7 @@ class MagicTestManagerTest extends TestCase
 
         $this->testFilePaths = [
             __DIR__ . '/fixtures/ExampleTest.example',
-            __DIR__ . '/fixtures/ExampleTestWithContent.example',
+            __DIR__ . '/fixtures/ExampleTestWithContentMacro.example',
         ];
 
         $this->originalContents = [
@@ -34,7 +34,7 @@ class MagicTestManagerTest extends TestCase
     /** @test */
     public function it_replaces_the_content_of_a_file_with_actions()
     {
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentOutput.example');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentMacroOutput.example');
 
         MagicTest::setOpenFile($this->testFilePaths[1]);
         MagicTest::setTestMethod('testBasicExample');
