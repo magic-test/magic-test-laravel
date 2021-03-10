@@ -3,6 +3,8 @@
 namespace MagicTest\MagicTest\Grammar;
 
 use Illuminate\Support\Arr;
+use PhpParser\Node\Scalar\String_;
+use MagicTest\MagicTest\Grammar\Pause;
 
 class Click extends Grammar
 {
@@ -69,7 +71,12 @@ class Click extends Grammar
         $target = trim($target);
 
         return [
-            $target
+            new String_($target)
         ];
+    }
+
+    public function pause()
+    {
+        return new Pause(200);
     }
 }

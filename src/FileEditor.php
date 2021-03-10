@@ -42,7 +42,7 @@ class FileEditor
     public function process(string $content, Collection $grammar, string $method): string
     {
         $file = PhpFile::fromContent($content, $method, $grammar);
-        dd($file);
+        return $file;
 
         $file->forEachLine(function (Line $line, $key) use ($file, $grammar) {
             if (! $file->isLastAction($line)) {

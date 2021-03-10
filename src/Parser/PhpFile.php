@@ -76,6 +76,7 @@ class PhpFile
         $traverser = new NodeTraverser;
         $traverser->addVisitor(new GrammarBuilderVisitor($grammar));
 
+
         // $traverser->traverse($closure->stmts);
         $expression = $closure->stmts[0]->expr;
         // dd($nodeFinder->findFirst($closure->stmts, function($node) {
@@ -83,7 +84,7 @@ class PhpFile
         // }));
         $traverser->traverse($closure->stmts);
     
-            dd($closure->stmts);
+
         $magicMethod = $nodeFinder->findFirst($closure->stmts, function (\PhpParser\Node $node) {
             return $node instanceof \PhpParser\Node\Expr\MethodCall && $node->name == "magic";
         });
@@ -104,9 +105,9 @@ class PhpFile
         // dd($closure->stmts);
         //Expression::class
 
-$prettyPrinter = new \PhpParser\PrettyPrinter\Standard;
+$prettyPrinter = new CustomPrettyPrinter;
 $newCode = $prettyPrinter->printFormatPreserving($newStmts, $stmts, $oldTokens);
-dd($newCode);
+    return $newCode;
 
         $traverser = new NodeTraverser;
         $traverser->addVisitor(new class extends NodeVisitorAbstract {

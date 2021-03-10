@@ -3,6 +3,7 @@ namespace MagicTest\MagicTest\Parser;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\BuilderFactory;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node\Expr\MethodCall;
@@ -23,10 +24,15 @@ class GrammarBuilderVisitor extends NodeVisitorAbstract
 
     public function buildNodes($node)
     {
-        foreach ($this->grammar as $gram) {
+        $grammar = $this->grammar
+                        ->map(function($grammar) {
+                            return [$grammar, $grammar->pause()];
+                        })->flatten()->filter();
+
+        foreach ($grammar as $gram) {
             $arguments = $this->buildArguments($gram->arguments());
             $previousNode = clone $node;
-            $node->var = new MethodCall(
+            $node->var = $call = new MethodCall(
                 $previousNode->var,
                 $gram->nameForParser(),
                 $arguments
@@ -38,7 +44,7 @@ class GrammarBuilderVisitor extends NodeVisitorAbstract
     {
         return collect($arguments)
                 ->map(fn($argument) => 
-                    new Arg(new String_($argument))
+                    new Arg($argument)
                 )
                 ->toArray();
     }
