@@ -83,7 +83,7 @@ class PhpFile
         // }));
         $traverser->traverse($closure->stmts);
     
-
+            dd($closure->stmts);
         $magicMethod = $nodeFinder->findFirst($closure->stmts, function (\PhpParser\Node $node) {
             return $node instanceof \PhpParser\Node\Expr\MethodCall && $node->name == "magic";
         });
