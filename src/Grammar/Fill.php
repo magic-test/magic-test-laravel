@@ -19,7 +19,8 @@ class Fill extends Grammar
     public function arguments()
     {
         return [
-            new String_($this->options['text'])
+            new String_(trim($this->target, "'")),
+            new String_(trim($this->options['text'], "'"))
         ];
     }
 

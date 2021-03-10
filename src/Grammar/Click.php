@@ -62,8 +62,15 @@ class Click extends Grammar
             $strippedTagsTarget = trim($this->target, "'");
 
             return [
-                "input[name={$strippedTagsTarget}]",
-                "{$label}"
+                new String_("input[name={$strippedTagsTarget}]"),
+                new String_($label)
+            ];
+        } elseif ($this->tag === 'select') {
+            $label = Arr::get($this->targetMeta, 'label');
+
+            return [
+                new String_(trim($this->target, "'")),
+                new String_($label)
             ];
         }
 
