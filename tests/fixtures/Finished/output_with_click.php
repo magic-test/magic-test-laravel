@@ -2,9 +2,9 @@
 
 namespace Tests\Browser;
 
-use Tests\DuskTestCase;
-use Laravel\Dusk\Browser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Laravel\Dusk\Browser;
+use Tests\DuskTestCase;
 
 class ExampleTest extends DuskTestCase
 {
@@ -26,8 +26,7 @@ class ExampleTest extends DuskTestCase
                     ->type('password', 'password')
                     ->type('password_confirmation', 'password')
                     ->radio('input[name=some_radio]', 'Option 1')
-                    ->press('REGISTER')
-                    ->magic();
+                    ->press('REGISTER');
         });
     }
 }

@@ -6,7 +6,7 @@ use PhpParser\Node\Scalar\LNumber;
 
 class Pause
 {
-    public function __construct($time = 200)
+    public function __construct($time = 500)
     {
         $this->time = $time;
     }

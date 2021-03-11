@@ -50,7 +50,7 @@ class GrammarBuilderVisitor extends NodeVisitorAbstract
         if (in_array($previousMethod->name->__toString(), [
             'clickLink', 'press',
         ])) {
-            $grammar->prepend(new Pause(200));
+            $grammar->prepend(new Pause(500));
         }
 
 

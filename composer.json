@@ -40,10 +40,7 @@
     "autoload-dev": {
         "psr-4": {
             "MagicTest\\MagicTest\\Tests\\": "tests"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
+        }
     },
     "scripts": {
         "psalm": "vendor/bin/psalm",

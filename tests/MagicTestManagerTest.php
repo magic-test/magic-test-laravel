@@ -14,8 +14,8 @@ class MagicTestManagerTest extends TestCase
         parent::setUp();
 
         $this->testFilePaths = [
-            __DIR__ . '/fixtures/ExampleTest.example',
-            __DIR__ . '/fixtures/ExampleTestWithContentMacro.example',
+            __DIR__ . '/fixtures/Regular/input.php',
+            __DIR__ . '/fixtures/WithActions/input.php',
         ];
 
         $this->originalContents = [
@@ -34,7 +34,7 @@ class MagicTestManagerTest extends TestCase
     /** @test */
     public function it_replaces_the_content_of_a_file_with_actions()
     {
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentMacroOutput.example');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/WithActions/output.php');
 
         MagicTest::setOpenFile($this->testFilePaths[1]);
         MagicTest::setTestMethod('testBasicExample');
@@ -56,7 +56,7 @@ class MagicTestManagerTest extends TestCase
     /** @test */
     public function it_replaces_the_content_of_a_file_without_actions()
     {
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestOutput.example');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/Regular/output.php');
 
         MagicTest::setOpenFile($this->testFilePaths[0]);
         MagicTest::setTestMethod('testBasicExample');

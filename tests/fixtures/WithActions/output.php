@@ -2,11 +2,8 @@
 
 namespace Tests\Browser;
 
-use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
-use MagicTest\MagicTest\MagicTest;
-use MagicTest\MagicTest\MagicTestManager;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\DuskTestCase;
 
 class ExampleTest extends DuskTestCase
 {
@@ -21,6 +18,10 @@ class ExampleTest extends DuskTestCase
             $browser->visit('/')
                     ->assertSee('Laravel')
                     ->clickLink('Log in')
+                    ->pause(500)
+                    ->clickLink('Forgot your password?')
+                    ->pause(500)
+                    ->assertSee('Mateus')
                     ->magic();
         });
     }

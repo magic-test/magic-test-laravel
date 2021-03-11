@@ -83,6 +83,6 @@ class Click extends Grammar
 
     public function pause()
     {
-        return new Pause(200);
+        return new Pause(500);
     }
 }
