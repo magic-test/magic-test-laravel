@@ -35,10 +35,7 @@
         "psr-4": {
             "MagicTest\\MagicTest\\": "src",
             "MagicTest\\MagicTest\\Database\\Factories\\": "database/factories"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {

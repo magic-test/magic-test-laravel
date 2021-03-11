@@ -27,20 +27,6 @@ class MagicTest
         self::$method = $method;
     }
 
-    public static function running(): bool
-    {
-        return config('magic-test-laravel')['running'] === true;
-    }
-
-    public function ok(): void
-    {
-        app(MagicTestManager::class)->runScripts();
-    }
-
-    public function flush()
-    {
-    }
-    
     public static function scripts(): string
     {
         $script = file_get_contents(__DIR__ . '/../dist/magic_test.js');
