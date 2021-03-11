@@ -13,7 +13,7 @@ class MagicTestCommand extends Command
     public function handle()
     {
         $this->comment('Your Magic Test session is starting...');
-        $filter = $this->option('fiter') ? (' --filter ' . $this->option('filter')) : '';
+        $filter = $this->option('filter') ? (' --filter ' . $this->option('filter')) : '';
         shell_exec('DUSK_HEADLESS_DISABLED=1 MAGIC_TEST=1 php artisan dusk' . $filter);
     }
 }
