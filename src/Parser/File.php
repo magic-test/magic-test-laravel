@@ -190,7 +190,7 @@ class File
     {
         return $this->lines
                 ->map(fn (Line $line) => $line->__toString())
-                ->implode("\n");
+                ->implode(PHP_EOL);
     }
 
     public function output(): string
@@ -204,7 +204,7 @@ class File
         return tap(
             $this->lines
             ->map(fn (Line $line) => $line->__toString())
-            ->implode("\n"),
+            ->implode(PHP_EOL),
             fn () => $this->lines = $lines
         );
     }
@@ -255,7 +255,7 @@ class File
 
     protected function generateLines(): Collection
     {
-        $lines = explode("\n", $this->content);
+        $lines = explode(PHP_EOL, $this->content);
 
         return  collect($lines)->mapInto(Line::class);
     }
