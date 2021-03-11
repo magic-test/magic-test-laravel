@@ -2,22 +2,33 @@
 
 namespace MagicTest\MagicTest\Parser;
 
+use Illuminate\Support\Collection;
+use MagicTest\MagicTest\Parser\Printer\PrettyPrinter;
+use PhpParser\Lexer;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\NodeDumper;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\CloningVisitor;
 use PhpParser\NodeVisitor\ParentConnectingVisitor;
+use PhpParser\Parser;
 use PhpParser\ParserFactory;
 
 class PhpFile
 {
-    public static function fromContent(string $content, string $method, $grammar)
+    protected Parser $parser;
+
+    protected Lexer $lexer;
+
+    protected $ast;
+
+    protected ?Closure $closure;
+
+    public function __construct(string $content, string $method)
     {
-        $lexer = new \PhpParser\Lexer\Emulative([
+        $this->lexer = new \PhpParser\Lexer\Emulative([
             'usedAttributes' => [
                 'comments',
                 'startLine', 'endLine',
@@ -25,99 +36,78 @@ class PhpFile
             ],
         ]);
 
-        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7, $lexer);
+        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7, $this->lexer);
+        $this->ast = collect($this->parser->parse($content)[0]);
+        $this->initialStatements = $this->ast['stmts'];
+        $this->newStatements = $this->getNewStatements();
+        $this->closure = $this->getClosure($method);
+    }
 
-        $ast = collect($parser->parse($content)[0]);
+    public static function fromContent(string $content, string $method)
+    {
+        return new static($content, $method);
+    }
 
-        $stmts = $ast['stmts'];
-
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor(new CloningVisitor());
-
-
-        $oldTokens = $lexer->getTokens();
-
-
-        $newStmts = $traverser->traverse($stmts);
-
-        $nodeDumper = new NodeDumper;
-        // dd($nodeDumper->dump($stmts));
-
-
-
-        $nodeFinder = new NodeFinder;
-        $class = $nodeFinder->findFirst(
-            $newStmts,
-            fn (Node $node) =>
-          $node instanceof ClassMethod && $node->name->__toString() === $method
-        );
-        $methodCall = $nodeFinder->findFirst($class->stmts, fn (Node $node) => $node instanceof MethodCall);
-        $closure = $nodeFinder->findFirst($methodCall->args, fn (Node $node) => $node->value instanceof Closure)->value;
-
-
-
+    public function addMethods(Collection $grammar): string
+    {
         $traverser = new NodeTraverser;
         $traverser->addVisitor(new ParentConnectingVisitor);
         $traverser->addVisitor(new GrammarBuilderVisitor($grammar));
 
         // add grammar
-        $traverser->traverse($closure->stmts);
-    
+        $traverser->traverse($this->closure->stmts);
 
-        $prettyPrinter = new CustomPrettyPrinter;
-        $newCode = $prettyPrinter->printFormatPreserving($newStmts, $stmts, $oldTokens);
 
-        return $newCode;
+        return (new PrettyPrinter)->printFormatPreserving(
+            $this->newStatements,
+            $this->initialStatements,
+            $this->lexer->getTokens()
+        );
     }
 
-    public static function finish(string $content, string $method)
+    public function finish(): string
     {
-        $lexer = new \PhpParser\Lexer\Emulative([
-            'usedAttributes' => [
-                'comments',
-                'startLine', 'endLine',
-                'startTokenPos', 'endTokenPos',
-            ],
-        ]);
-
-        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7, $lexer);
-
-        $ast = collect($parser->parse($content)[0]);
-
-        $stmts = $ast['stmts'];
-
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor(new CloningVisitor());
-
-
-        $oldTokens = $lexer->getTokens();
-
-
-        $newStmts = $traverser->traverse($stmts);
-
-
-
-        $nodeFinder = new NodeFinder;
-
-        $class = $nodeFinder->findFirst(
-            $newStmts,
-            fn (Node $node) =>
-          $node instanceof ClassMethod && $node->name->__toString() === $method
-        );
-        $methodCall = $nodeFinder->findFirst($class->stmts, fn (Node $node) => $node instanceof MethodCall);
-        $closure = $nodeFinder->findFirst($methodCall->args, fn (Node $node) => $node->value instanceof Closure)->value;
-
-
         $traverser = new NodeTraverser;
         $traverser->addVisitor(new ParentConnectingVisitor);
         $traverser->addVisitor(new MagicRemoverVisitor);
 
-        // remove finish
-        $traverser->traverse($closure->stmts);
-    
-        $prettyPrinter = new CustomPrettyPrinter;
-        $newCode = $prettyPrinter->printFormatPreserving($newStmts, $stmts, $oldTokens);
+        // add grammar
+        $traverser->traverse($this->closure->stmts);
 
-        return $newCode;
+
+        return (new PrettyPrinter)->printFormatPreserving(
+            $this->newStatements,
+            $this->initialStatements,
+            $this->lexer->getTokens()
+        );
+    }
+
+    protected function getNewStatements()
+    {
+        $traverser = new NodeTraverser;
+        $traverser->addVisitor(new CloningVisitor);
+
+        return $traverser->traverse($this->initialStatements);
+    }
+
+    protected function getClassMethod(string $method): ?ClassMethod
+    {
+        return (new NodeFinder)->findFirst(
+            $this->newStatements,
+            fn (Node $node) => $node instanceof ClassMethod && $node->name->__toString() === $method
+        );
+    }
+
+    protected function getMethodCall(ClassMethod $classMethod): ?MethodCall
+    {
+        return (new NodeFinder)->findFirst($classMethod->stmts, fn (Node $node) => $node instanceof MethodCall);
+    }
+
+    protected function getClosure(string $method): ?Closure
+    {
+        $classMethod = $this->getClassMethod($method);
+        $methodCall = $this->getMethodCall($classMethod);
+
+        return (new NodeFinder)->findFirst($methodCall->args, fn (Node $node) => $node->value instanceof Closure)->value;
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace MagicTest\MagicTest\Parser;
+namespace MagicTest\MagicTest\Parser\Printer;
 
 use MagicTest\MagicTest\Grammar\Grammar;
 use PhpParser\Node\Expr;
 use PhpParser\PrettyPrinter\Standard;
 
-class CustomPrettyPrinter extends Standard
+class PrettyPrinter extends Standard
 {
     protected function pExpr_MethodCall(Expr\MethodCall $node)
     {

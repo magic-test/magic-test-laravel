@@ -15,7 +15,7 @@ class FileEditor
 
     public function finish(string $content, string $method): string
     {
-        return PhpFile::finish($content, $method);
+        return PhpFile::fromContent($content, $method)->finish();
     }
 
     /**
@@ -28,6 +28,6 @@ class FileEditor
      */
     public function process(string $content, Collection $grammar, string $method): string
     {
-        return PhpFile::fromContent($content, $method, $grammar);
+        return PhpFile::fromContent($content, $method)->addMethods($grammar);
     }
 }
