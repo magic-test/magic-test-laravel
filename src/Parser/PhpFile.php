@@ -22,7 +22,11 @@ class PhpFile
 
     protected Lexer $lexer;
 
-    protected $ast;
+    protected array $ast;
+
+    protected array $initialStatements;
+
+    protected array $newStatements;
 
     protected ?Closure $closure;
 
@@ -37,7 +41,7 @@ class PhpFile
         ]);
 
         $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7, $this->lexer);
-        $this->ast = collect($this->parser->parse($content)[0]);
+        $this->ast = (array) $this->parser->parse($content)[0];
         $this->initialStatements = $this->ast['stmts'];
         $this->newStatements = $this->getNewStatements();
         $this->closure = $this->getClosure($method);
@@ -71,7 +75,7 @@ class PhpFile
         $traverser->addVisitor(new ParentConnectingVisitor);
         $traverser->addVisitor(new MagicRemoverVisitor);
 
-        // add grammar
+
         $traverser->traverse($this->closure->stmts);
 
 
@@ -82,7 +86,12 @@ class PhpFile
         );
     }
 
-    protected function getNewStatements()
+    /**
+     * Clone the statements to leave the starting ones untouched so they can be diffed by the printer later.
+     *
+     * @return array
+     */
+    protected function getNewStatements(): array
     {
         $traverser = new NodeTraverser;
         $traverser->addVisitor(new CloningVisitor);
