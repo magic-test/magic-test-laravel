@@ -8,11 +8,6 @@ use MagicTest\MagicTest\Parser\PhpFile;
 
 class FileEditor
 {
-    const MACRO = '->magic()';
-    protected static $writingTests = false;
-
-    protected $possibleMethods = ['MagicTestManager::run', 'magic_test', 'magic', 'm('];
-
     public function finish(string $content, string $method): string
     {
         return PhpFile::fromContent($content, $method)->finish();

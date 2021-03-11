@@ -1,5 +1,5 @@
 <?php
-namespace MagicTest\MagicTest\Parser;
+namespace MagicTest\MagicTest\Parser\Visitors;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;

@@ -1,5 +1,5 @@
 <?php
-namespace MagicTest\MagicTest\Parser;
+namespace MagicTest\MagicTest\Parser\Visitors;
 
 use Illuminate\Support\Collection;
 use MagicTest\MagicTest\Grammar\Pause;

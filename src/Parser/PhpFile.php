@@ -4,6 +4,8 @@ namespace MagicTest\MagicTest\Parser;
 
 use Illuminate\Support\Collection;
 use MagicTest\MagicTest\Parser\Printer\PrettyPrinter;
+use MagicTest\MagicTest\Parser\Visitors\GrammarBuilderVisitor;
+use MagicTest\MagicTest\Parser\Visitors\MagicRemoverVisitor;
 use PhpParser\Lexer;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Closure;
