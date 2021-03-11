@@ -8,6 +8,8 @@ use PhpParser\PrettyPrinter\Standard;
 
 class PrettyPrinter extends Standard
 {
+    protected $nl = PHP_EOL;
+    
     protected function pExpr_MethodCall(Expr\MethodCall $node)
     {
         $call = Grammar::indent('->' . $this->pObjectProperty($node->name)
