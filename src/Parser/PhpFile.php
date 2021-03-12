@@ -11,6 +11,7 @@ use PhpParser\Lexer;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
@@ -110,9 +111,23 @@ class PhpFile
         );
     }
 
+    /**
+     * Finds the first valid method call inside a class method.
+     * A valid method call is one that is both a MethodCall instance and
+     * that also has a node that is a Identifier and ahs the name magic.
+     *
+     * @param \PhpParser\Node\Stmt\ClassMethod $classMethod
+     * @return \PhpParser\Node\Expr\MethodCall|null
+     */
     protected function getMethodCall(ClassMethod $classMethod): ?MethodCall
     {
-        return (new NodeFinder)->findFirst($classMethod->stmts, fn (Node $node) => $node instanceof MethodCall);
+        return (new NodeFinder)->findFirst($classMethod->stmts, function (Node $node) {
+            return $node instanceof MethodCall &&
+            (new NodeFinder)->find(
+                $node->args,
+                fn (Node $node) => $node instanceof Identifier && $node->name === 'magic'
+            );
+        });
     }
 
     /**
@@ -129,7 +144,7 @@ class PhpFile
 
         $methodCall = $this->getMethodCall($classMethod);
         throw_if(! $methodCall, new InvalidFileException("Could not find the browse call on file."));
-
+        
         $closure = (new NodeFinder)->findFirst($methodCall->args, fn (Node $node) => $node->value instanceof Closure);
         throw_if(! $closure, new InvalidFileException("Could not find the closure on file."));
 

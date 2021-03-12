@@ -94,4 +94,21 @@ class FileEditorTest extends TestCase
 
         $this->assertEquals($expectedOutput, $processedText);
     }
+
+    /** @test */
+    public function it_properly_adds_content_to_a_file_with_two_closures()
+    {
+        $expectedInput = file_get_contents(__DIR__ . '/fixtures/WithActionsAndTwoClosures/input.php');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/WithActionsAndTwoClosures/output.php');
+        
+
+        $grammar = collect([
+            new Click('', "'Forgot your password?'", [], [], 'a'),
+            new See('', "'Mateus'", [], [], 'span'),
+        ]);
+
+        $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
+
+        $this->assertEquals($expectedOutput, $processedText);
+    }
 }
