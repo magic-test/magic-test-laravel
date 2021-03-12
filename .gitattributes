@@ -12,4 +12,4 @@
 /psalm.xml          export-ignore
 /psalm.xml.dist     export-ignore
 
-/tests/*.php text eol=lf
+*.php text eol=lf
