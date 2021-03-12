@@ -61,16 +61,9 @@ class PhpFile
         $traverser = new NodeTraverser;
         $traverser->addVisitor(new ParentConnectingVisitor);
         $traverser->addVisitor(new GrammarBuilderVisitor($grammar));
-
-        // add grammar
         $traverser->traverse($this->closure->stmts);
 
-
-        return (new PrettyPrinter)->printFormatPreserving(
-            $this->newStatements,
-            $this->initialStatements,
-            $this->lexer->getTokens()
-        );
+        return $this->print();
     }
 
     public function finish(): string
@@ -78,11 +71,13 @@ class PhpFile
         $traverser = new NodeTraverser;
         $traverser->addVisitor(new ParentConnectingVisitor);
         $traverser->addVisitor(new MagicRemoverVisitor);
-
-
         $traverser->traverse($this->closure->stmts);
 
+        return $this->print();
+    }
 
+    protected function print(): string
+    {
         return (new PrettyPrinter)->printFormatPreserving(
             $this->newStatements,
             $this->initialStatements,
