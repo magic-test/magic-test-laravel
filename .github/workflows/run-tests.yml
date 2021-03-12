@@ -19,6 +19,11 @@ jobs:
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
+      - name: Fix line endings on Windows
+        run: |
+          git config --system core.autocrlf false
+          git config --system core.eol lf
+
       - name: Checkout code
         uses: actions/checkout@v2
 
