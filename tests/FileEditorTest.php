@@ -77,4 +77,21 @@ class FileEditorTest extends TestCase
 
         $this->assertEquals($expectedOutput, $processedText);
     }
+
+    /** @test */
+    public function it_properly_adds_methods_to_a_file_using_inline_code()
+    {
+        $expectedInput = file_get_contents(__DIR__ . '/fixtures/WithActionsAndInlineCode/input.php');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/WithActionsAndInlineCode/output.php');
+        
+
+        $grammar = collect([
+            new Click('', "'Forgot your password?'", [], [], 'a'),
+            new See('', "'Mateus'", [], [], 'span'),
+        ]);
+
+        $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
+
+        $this->assertEquals($expectedOutput, $processedText);
+    }
 }
