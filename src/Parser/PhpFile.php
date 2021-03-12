@@ -3,6 +3,7 @@
 namespace MagicTest\MagicTest\Parser;
 
 use Illuminate\Support\Collection;
+use MagicTest\MagicTest\Exceptions\InvalidFileException;
 use MagicTest\MagicTest\Parser\Printer\PrettyPrinter;
 use MagicTest\MagicTest\Parser\Visitors\GrammarBuilderVisitor;
 use MagicTest\MagicTest\Parser\Visitors\MagicRemoverVisitor;
@@ -114,11 +115,24 @@ class PhpFile
         return (new NodeFinder)->findFirst($classMethod->stmts, fn (Node $node) => $node instanceof MethodCall);
     }
 
+    /**
+     * Get the closure object
+     *
+     * @param string $method
+     * @throws \MagicTest\MagicTest\Exceptions\InvalidFileException
+     * @return Closure
+     */
     protected function getClosure(string $method): ?Closure
     {
         $classMethod = $this->getClassMethod($method);
-        $methodCall = $this->getMethodCall($classMethod);
+        throw_if(! $classMethod, new InvalidFileException("Could not find method {$method} on file."));
 
-        return (new NodeFinder)->findFirst($methodCall->args, fn (Node $node) => $node->value instanceof Closure)->value;
+        $methodCall = $this->getMethodCall($classMethod);
+        throw_if(! $methodCall, new InvalidFileException("Could not find the browse call on file."));
+
+        $closure = (new NodeFinder)->findFirst($methodCall->args, fn (Node $node) => $node->value instanceof Closure);
+        throw_if(! $closure, new InvalidFileException("Could not find the closure on file."));
+
+        return $closure->value;
     }
 }
