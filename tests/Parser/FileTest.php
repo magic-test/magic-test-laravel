@@ -3,10 +3,10 @@
 namespace MagicTest\MagicTest\Tests\Parser;
 
 use MagicTest\MagicTest\Exceptions\InvalidFileException;
-use MagicTest\MagicTest\Parser\PhpFile;
+use MagicTest\MagicTest\Parser\File;
 use MagicTest\MagicTest\Tests\TestCase;
 
-class PhpFileTest extends TestCase
+class FileTest extends TestCase
 {
     /** @test */
     public function it_validates_a_class_missing_a_method()
@@ -15,7 +15,7 @@ class PhpFileTest extends TestCase
 
         $fixture = file_get_contents(__DIR__ . './../fixtures/Errors/MissingMethod.php');
 
-        new PhpFile($fixture, 'testBasicExample');
+        new File($fixture, 'testBasicExample');
     }
 
     /** @test */
@@ -25,7 +25,7 @@ class PhpFileTest extends TestCase
 
         $fixture = file_get_contents(__DIR__ . './../fixtures/Errors/MissingMethodCall.php');
 
-        new PhpFile($fixture, 'testBasicExample');
+        new File($fixture, 'testBasicExample');
     }
 
     /** @test */
@@ -35,6 +35,6 @@ class PhpFileTest extends TestCase
 
         $fixture = file_get_contents(__DIR__ . './../fixtures/Errors/MissingClosure.php');
 
-        new PhpFile($fixture, 'testBasicExample');
+        new File($fixture, 'testBasicExample');
     }
 }

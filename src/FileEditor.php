@@ -3,14 +3,13 @@
 namespace MagicTest\MagicTest;
 
 use Illuminate\Support\Collection;
-use MagicTest\MagicTest\Grammar\Grammar;
-use MagicTest\MagicTest\Parser\PhpFile;
+use MagicTest\MagicTest\Parser\File;
 
 class FileEditor
 {
     public function finish(string $content, string $method): string
     {
-        return PhpFile::fromContent($content, $method)->finish();
+        return File::fromContent($content, $method)->finish();
     }
 
     /**
@@ -23,6 +22,6 @@ class FileEditor
      */
     public function process(string $content, Collection $grammar, string $method): string
     {
-        return PhpFile::fromContent($content, $method)->addMethods($grammar);
+        return File::fromContent($content, $method)->addMethods($grammar);
     }
 }

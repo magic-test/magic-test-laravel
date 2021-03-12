@@ -20,7 +20,7 @@ use PhpParser\NodeVisitor\ParentConnectingVisitor;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 
-class PhpFile
+class File
 {
     protected Parser $parser;
 
