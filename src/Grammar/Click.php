@@ -2,16 +2,15 @@
 
 namespace MagicTest\MagicTest\Grammar;
 
-use Illuminate\Support\Arr;
 use PhpParser\Node\Scalar\String_;
 
 class Click extends Grammar
 {
     public function nameForParser()
     {
-        if (Arr::get($this->meta, 'type') === 'checkbox') {
+        if ($this->getMeta('type') === 'checkbox') {
             return 'check';
-        } elseif (Arr::get($this->meta, 'type') === 'radio') {
+        } elseif ($this->getMeta('type') === 'radio') {
             return 'radio';
         } elseif ($this->tag === 'select') {
             return 'select';
@@ -27,23 +26,15 @@ class Click extends Grammar
 
     public function arguments()
     {
-        if (Arr::get($this->meta, 'type') === 'radio') {
-            $label = Arr::get($this->meta, 'label');
-
-            // we remove it since we are going to put it under a selector (e.g: input[name=foo])
-            // and we need to enclose the whole thing instead of just the target.
-            $strippedTagsTarget = trim($this->target, "'");
-
+        if ($this->getMeta('type') === 'radio') {
             return [
-                new String_("input[name={$strippedTagsTarget}]"),
-                new String_($label),
+                new String_($this->selector(true)),
+                new String_($this->getMeta('label')),
             ];
         } elseif ($this->tag === 'select') {
-            $label = Arr::get($this->meta, 'label');
-
             return [
-                new String_(trim($this->target, "'")),
-                new String_($label),
+                new String_($this->selector()),
+                new String_($this->getMeta('label')),
             ];
         }
 
@@ -55,5 +46,13 @@ class Click extends Grammar
     public function pause()
     {
         return new Pause(500);
+    }
+
+    public function selector($forceInput = false): string
+    {
+        $attribute = $this->attributes->filter->isUnique()->first() ??
+                    $this->attributes->first();
+        
+        return $attribute->buildSelector($forceInput);
     }
 }

@@ -22,11 +22,16 @@ class Attribute
         return $this->isUnique;
     }
 
-    public function buildSelector(): string
+    public function buildSelector($element = 'input', $forceInputSyntax = false): string
     {
         return [
-            'name' => $this->value,
-            'id' => "#{$this->value}",
-        ][$this->name] ?? "input[{$this->name}={$this->value}]";
+            'name' => $forceInputSyntax ? $this->buildFullSelector($element) : $this->value,
+            'id' => $forceInputSyntax ? $this->buildFullSelector($element) : "#{$this->value}",
+        ][$this->name] ?? $this->buildFullSelector($element);
+    }
+
+    public function buildFullSelector(string $element): string
+    {
+        return "{$element}[{$this->name}={$this->value}]";
     }
 }
