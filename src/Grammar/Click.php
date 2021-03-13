@@ -28,7 +28,7 @@ class Click extends Grammar
     {
         if ($this->getMeta('type') === 'radio') {
             return [
-                new String_($this->selector(true)),
+                new String_($this->selector(true, false)),
                 new String_($this->getMeta('label')),
             ];
         } elseif ($this->tag === 'select') {
@@ -39,7 +39,7 @@ class Click extends Grammar
         }
 
         return [
-            new String_($this->getMeta('text')),
+            new String_($this->getMeta('label') ?? $this->getMeta('text')),
         ];
     }
 
@@ -48,11 +48,11 @@ class Click extends Grammar
         return new Pause(500);
     }
 
-    public function selector($forceInput = false): string
+    public function selector($forceInput = false, $unique = true): string
     {
-        $attribute = $this->attributes->filter->isUnique()->first() ??
-                    $this->attributes->first();
+        $attribute = $unique ? $this->attributes->filter->isUnique()->first() : $this->attributes->first();
+        $attribute = $attribute ?? $this->attributes->first();
         
-        return $attribute->buildSelector($forceInput);
+        return $attribute->buildSelector($this->tag, $forceInput);
     }
 }

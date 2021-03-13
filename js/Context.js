@@ -9,21 +9,19 @@ export function enableKeyboardShortcuts() {
     document.addEventListener('keydown', keydown, false);
     
     function generateAssertion() {
-        var text = selectedText();
+        let text = selectedText();
         if (text.trim().length > 0) {
-            var action = "see";
-            var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
-            var target = `'${text.replace("'", "\\\'")}'`;
-            var options = "";
+            text = text.replace("'", "\\\'");
             MagicTest.addData({
-                action: action,
-                path: '',
-                target: target,
-                options: options,
-                classList: [],
-                tag: '',
+                action: 'see',
+                attributes: [],
+                parent: [],
+                tag: null,
+                meta: {
+                    text: text
+                }
             });
-            alert("Generated an assertion for \"" + selectedText() + "\". Type `ok()` in the debugger console to add it to your test file.");
+            alert("Generated an assertion for \"" + selectedText() + "\". Type `ok` in the debugger console to add it to your test file.");
         }
     }
 

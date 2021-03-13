@@ -48,7 +48,7 @@ class Grammar
             'see' => See::class,
             'fill' => Fill::class,
         ];
-
+        logger(json_encode($command));
 
         return new $types[$command['action']](
             $command['attributes'],

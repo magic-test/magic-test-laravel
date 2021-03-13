@@ -1,3 +1,6 @@
+import AttributeParser from './../AttributeParser';
+import { isSameArray } from './../Helpers';
+
 export default function keypress(event) {
     event = event || window.event;
     console.log(event);
@@ -10,23 +13,7 @@ export default function keypress(event) {
     // let isLivewire = Array.from(attributes).filter((attribute) => attribute.nodeName.includes('wire:')).length > 0;
 
 
-    let isUnique = (attribute) => {
-        if (attribute.name == 'class') {
-            return document.getElementsByClassName(attribute.value).length === 1;
-        }
-
-        let selector = `input[${attribute.name}=${attribute.value}]`;
-        
-        return document.querySelectorAll(selector).length === 1;
-    };
-
-    const parsedAttributes = Array.from(attributes).map(function(attribute) {
-        return {
-            name: attribute.name,
-            value: attribute.value,
-            isUnique: isUnique(attribute)
-        }
-    });
+    const parsedAttributes = AttributeParser(attributes);
 
     const parent = {
         tag: event.target.parent?.tagName.toLowerCase() || null
@@ -45,8 +32,7 @@ export default function keypress(event) {
     };
 
     const isSame = (firstObject, secondObject) => {
-        return firstObject.tag == secondObject.tag &&
-            JSON.stringify(firstObject.attributes) === JSON.stringify(secondObject.attributes);
+        return firstObject.tag == secondObject.tag && isSameArray(firstObject.attributes, secondObject.attributes);
     };
 
     var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));

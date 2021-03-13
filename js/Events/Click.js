@@ -1,33 +1,30 @@
 import { getPathTo } from './../Finders';
+import AttributeParser from './../AttributeParser';
+import { isSameArray } from '../Helpers';
 
 export default function click(event) {
-    console.log(event);
     var tagName = event.currentTarget.tagName;
-    var classList = event.currentTarget.classList;
-    var action = "";
-    var target = "";
-    var options = "";
-    var path = '';
-    var targetMeta = {
+    var meta = {
         type: event.target.type || null
     };
+    let attributes = event.currentTarget.attributes;
+    let parent = event.currentTarget.parentElement;
+    const parsedAttributes = AttributeParser(attributes, tagName.toLowerCase());
 
     if (
         tagName == "BUTTON" ||
         tagName == "A" ||
         (tagName == "INPUT" && event.currentTarget.type == "submit")
     ) {
-        action = "click";
         var target = event.currentTarget.value || event.currentTarget.text || event.currentTarget.innerText;
         if (!target) {
             return;
         }
-        target = "'" + target.trim().replace("'", "\\'") + "'";
+        meta.label = target.trim().replace("'", "\\'");
     } else if (tagName == 'SELECT') {
-        action = "click";
         var target = event.currentTarget.name;
 
-        target = "'" + target.trim().replace("'", "\\'") + "'";
+        meta.label = target.trim().replace("'", "\\'");
 
     } else if (tagName == "INPUT") {
         let ignoreType = [
@@ -42,23 +39,22 @@ export default function click(event) {
         if (ignoreType.includes(event.currentTarget.type)) {
             return;
         }
-        var path = getPathTo(event.currentTarget);
-        target = event.currentTarget.name;
-        action = `click`;
+
+        meta.label = event.currentTarget.name;
     } else {
         return;
     }
 
     if (tagName === 'SELECT') {
-        targetMeta.label = event.currentTarget.value;
+        meta.label = event.currentTarget.value;
 
         var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
         var lastAction = testingOutput[testingOutput.length - 1];
 
         // In case the latest action was the same select, we don't want to add a new one,
         // just change the target meta on the previous one.
-        if (lastAction && lastAction.tag == tagName.toLowerCase() && lastAction.target == target) {
-            lastAction.targetMeta = targetMeta;
+        if (lastAction && lastAction.tag == tagName.toLowerCase() && isSameArray(lastAction.attributes, parsedAttributes)) {
+            lastAction.meta = meta;
 
             sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
 
@@ -69,18 +65,19 @@ export default function click(event) {
         let label = event.target.labels?.[0];
 
         if (label) {
-            targetMeta.label = label.innerText;
+            meta.label = label.innerText;
         }
     }
 
-
-    MagicTest.addData({
-        action: action,
-        path: path,
-        target: target,
-        options: options,
-        classList: classList,
+    let finalObject = {
+        action: 'click',
+        attributes: parsedAttributes,
+        parent: parent,
         tag: tagName.toLowerCase(),
-        targetMeta: targetMeta
-    });
+        meta: meta
+    };
+
+
+
+    MagicTest.addData(finalObject);
 }
