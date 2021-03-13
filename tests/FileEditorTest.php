@@ -17,9 +17,9 @@ class FileEditorTest extends TestCase
         
 
         $grammar = collect([
-            new Click('', "'Log in'", [], [], 'a'),
-            new Click('', "'Forgot your password?'", [], [], 'a'),
-            new See('', "'Mateus'", [], [], 'span'),
+            new Click([], [], 'a', ['text' => 'Log In']),
+            new Click([], [], 'a', ['text' => 'Forgot your password?']),
+            new See([], [], 'span', ['text' => 'Mateus']),
         ]);
 
         $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');

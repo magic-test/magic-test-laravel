@@ -13,7 +13,7 @@ class AttributeCollection extends Collection
 
     public function getAttribute(string $name): string
     {
-        return $this->where('name', $name)->first()['value'];
+        return $this->where('name', $name)->first()->value;
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace MagicTest\MagicTest\Grammar;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use MagicTest\MagicTest\Element\Attribute;
 use MagicTest\MagicTest\Support\AttributeCollection;
 
@@ -13,7 +12,7 @@ class Grammar
 
     public array $parent;
 
-    public string $tag;
+    public ?string $tag;
 
     public array $meta;
 
@@ -33,34 +32,6 @@ class Grammar
         }
 
         return $indentation . $string;
-    }
-
-    public function build(bool $last = false)
-    {
-        return self::indent($this->action(), 4) . ($last ? ';' : '');
-    }
-
-    public function clean(string $string)
-    {
-        if (! Str::startsWith($string, "'")) {
-            $string = "'" . $string;
-        }
-
-        if (! Str::endsWith($string, "'")) {
-            $string .= "'";
-        }
-        
-        return trim($string);
-    }
-
-    public function trim(string $property): string
-    {
-        return trim($this->{$property});
-    }
-
-    public function hasTargetType(string $type): bool
-    {
-        return Arr::get($this->targetMeta, 'type') === $type;
     }
 
     public function isLivewire(): bool
@@ -93,5 +64,10 @@ class Grammar
     public function parseAttributes(array $attributes)
     {
         return  array_map(fn ($element) => new Attribute(...array_values($element)), $attributes);
+    }
+
+    public function getMeta(string $property)
+    {
+        return Arr::get($this->meta, $property);
     }
 }
