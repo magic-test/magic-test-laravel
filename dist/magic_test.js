@@ -24,8 +24,18 @@ function AttributeParser(attributes) {
       return document.getElementsByClassName(attribute.value).length === 1;
     }
 
-    var selector = "".concat(element, "[").concat(attribute.name, "=").concat(attribute.value, "]");
-    return document.querySelectorAll(selector).length === 1;
+    var attributeName = attribute.name;
+
+    if (attributeName.includes(':')) {
+      var split = attribute.name.split(':');
+      attributeName = "".concat(split[0], "\\:").concat(split[1]);
+    }
+
+    var selector = "".concat(element, "[").concat(attributeName, "=").concat(attribute.value, "]");
+
+    try {
+      return document.querySelectorAll(selector).length === 1;
+    } catch (e) {}
   };
 
   var parsedAttributes = Array.from(attributes).map(function (attribute) {

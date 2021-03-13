@@ -29,7 +29,9 @@ class MagicTestServiceProvider extends PackageServiceProvider
         Browser::macro('clickElement', function ($selector, $value) {
             foreach ($this->resolver->all($selector) as $element) {
                 if (Str::contains($element->getText(), $value)) {
-                    return $element->click();
+                    $element->click();
+
+                    return $this;
                 }
             }
 

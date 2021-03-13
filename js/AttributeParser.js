@@ -8,10 +8,21 @@ export default function AttributeParser(attributes, element = 'input') {
             return document.getElementsByClassName(attribute.value).length === 1;
         }
 
-        let selector = `${element}[${attribute.name}=${attribute.value}]`;
+        let attributeName = attribute.name;
 
-        
-        return document.querySelectorAll(selector).length === 1;
+        if (attributeName.includes(':')) {
+            let split = attribute.name.split(':');
+            attributeName = `${split[0]}\\:${split[1]}`;
+        }
+
+        let selector = `${element}[${attributeName}=${attribute.value}]`;
+
+
+        try {
+            return document.querySelectorAll(selector).length === 1;
+        } catch(e) {
+
+        }
     };
 
     const parsedAttributes = Array.from(attributes).map(function(attribute) {
