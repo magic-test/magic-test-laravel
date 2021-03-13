@@ -155,47 +155,61 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ keypress)
 /* harmony export */ });
 function keypress(event) {
-  console.log(event);
+  var _event$target$parent;
+
   event = event || window.event;
+  console.log(event);
+  var tagName = event.target.tagName.toLowerCase();
   var charCode = event.keyCode || event.which;
-  var name = event.target.name;
-  var tagName = '';
-  var classList = '';
   var charStr = String.fromCharCode(charCode);
-  var attributes = event.target.attributes; // console.log(attributes, Object.values(attributes));
+  var attributes = event.target.attributes; // let isLivewire = Array.from(attributes).filter((attribute) => attribute.nodeName.includes('wire:')).length > 0;
 
-  var isLivewire = Array.from(attributes).filter(function (attribute) {
-    return attribute.nodeName.includes('wire:');
-  }).length > 0;
+  var isUnique = function isUnique(attribute) {
+    if (attribute.name == 'class') {
+      return document.getElementsByClassName(attribute.value).length === 1;
+    }
 
-  if (!event.target.labels) {
-    return;
-  }
-
-  var label = event.target.labels[0].textContent;
-  var text = (event.target.value + charStr).trim().replace("'", "\\'");
-  var target = event.target.labels[0].textContent;
-  var options = {
-    "text": "'".concat(text, "'")
+    var selector = "input[".concat(attribute.name, "=").concat(attribute.value, "]");
+    return document.querySelectorAll(selector).length === 1;
   };
-  var action = 'fill';
+
+  var parsedAttributes = Array.from(attributes).map(function (attribute) {
+    return {
+      name: attribute.name,
+      value: attribute.value,
+      isUnique: isUnique(attribute)
+    };
+  });
+  var parent = {
+    tag: ((_event$target$parent = event.target.parent) === null || _event$target$parent === void 0 ? void 0 : _event$target$parent.tagName.toLowerCase()) || null
+  };
+  console.log(parsedAttributes);
+  var text = (event.target.value + charStr).trim().replace("'", "\\'");
+  var finalObject = {
+    action: 'fill',
+    attributes: parsedAttributes,
+    parent: parent,
+    tag: tagName,
+    meta: {
+      text: text
+    }
+  };
+
+  var isSame = function isSame(firstObject, secondObject) {
+    var sameAttributes = firstObject.attributes.length === secondObject.attributes.length && firstObject.attributes.every(function (element, index) {
+      return JSON.stringify(element) == JSON.stringify(secondObject.attributes[index]);
+    });
+    ;
+    return firstObject.tag == secondObject.tag && sameAttributes;
+  };
+
   var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
   var lastAction = testingOutput[testingOutput.length - 1];
 
-  if (lastAction && lastAction.action == action && lastAction.target == "'" + name + "'") {
-    lastAction.options = options;
+  if (lastAction && isSame(lastAction, finalObject)) {
+    lastAction.meta = finalObject.meta;
   } else {
-    testingOutput.push({
-      action: action,
-      path: '',
-      target: "'".concat(name, "'"),
-      options: options,
-      classList: classList,
-      tag: tagName.toLowerCase(),
-      targetMeta: {
-        isLivewire: isLivewire
-      }
-    });
+    testingOutput.push(finalObject);
   }
 
   sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
