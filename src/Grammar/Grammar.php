@@ -8,6 +8,8 @@ use MagicTest\MagicTest\Support\AttributeCollection;
 
 class Grammar
 {
+    const INDENT = '    ';
+    
     public AttributeCollection $attributes;
 
     public array $parent;

@@ -17,7 +17,7 @@ class FileEditorTest extends TestCase
         
 
         $grammar = collect([
-            new Click([], [], 'a', ['text' => 'Log In']),
+            new Click([], [], 'a', ['text' => 'Log in']),
             new Click([], [], 'a', ['text' => 'Forgot your password?']),
             new See([], [], 'span', ['text' => 'Mateus']),
         ]);
@@ -35,8 +35,8 @@ class FileEditorTest extends TestCase
         
 
         $grammar = collect([
-            new Click('', "'Forgot your password?'", [], [], 'a'),
-            new See('', "'Mateus'", [], [], 'span'),
+            new Click([], [], 'a', ['text' => 'Forgot your password?']),
+            new See([], [], 'span', ['text' => 'Mateus']),
         ]);
 
         $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
@@ -51,15 +51,17 @@ class FileEditorTest extends TestCase
         $expectedOutput = file_get_contents(__DIR__ . '/fixtures/Livewire/output.php');
 
         $grammar = collect([
-            new Fill('', 'name', [
-                'text' => "'Mateus'",
-            ], [], 'button', [
-                'isLivewire' => true,
+            new Fill([
+                ['name' => 'name', 'value' => 'name'],
+                ['name' => 'wire:model', 'value' => 'name'],
+            ], [], 'input', [
+                'text' => 'Mateus',
             ]),
-            new Fill('', 'email', [
-                'text' => "'mateus@mateusguimaraes.com'",
-            ], [], 'button', [
-                'isLivewire' => true,
+            new Fill([
+                ['name' => 'name', 'value' => 'email'],
+                ['name' => 'wire:model', 'email'],
+            ], [], 'input', [
+                'text' => 'mateus@mateusguimaraes.com',
             ]),
         ]);
 
@@ -86,8 +88,8 @@ class FileEditorTest extends TestCase
         
 
         $grammar = collect([
-            new Click('', "'Forgot your password?'", [], [], 'a'),
-            new See('', "'Mateus'", [], [], 'span'),
+            new Click([], [], 'a', ['text' => 'Forgot your password?']),
+            new See([], [], 'span', ['text' => 'Mateus']),
         ]);
 
         $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
@@ -103,8 +105,8 @@ class FileEditorTest extends TestCase
         
 
         $grammar = collect([
-            new Click('', "'Forgot your password?'", [], [], 'a'),
-            new See('', "'Mateus'", [], [], 'span'),
+            new Click([], [], 'a', ['text' => 'Forgot your password?']),
+            new See([], [], 'span', ['text' => 'Mateus']),
         ]);
 
         $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
