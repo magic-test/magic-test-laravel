@@ -4,31 +4,25 @@ namespace MagicTest\MagicTest\Grammar;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use MagicTest\MagicTest\Element\Attribute;
+use MagicTest\MagicTest\Support\AttributeCollection;
 
 class Grammar
 {
-    public $path;
+    public AttributeCollection $attributes;
 
-    public $target;
+    public array $parent;
 
-    public $options;
+    public string $tag;
 
-    public $classList;
+    public array $meta;
 
-    public $tag;
-
-    public $targetMeta;
-
-    const INDENT = '    ';
-
-    public function __construct($path, $target, $options, $classList, $tag, $targetMeta = null)
+    public function __construct($attributes, $parent, $tag, $meta)
     {
-        $this->path = $path;
-        $this->target = $this->clean($target);
-        $this->options = $options;
-        $this->classList = $classList;
+        $this->attributes = (new AttributeCollection($this->parseAttributes($attributes)))->reorderItems();
+        $this->parent = $parent;
         $this->tag = $tag;
-        $this->targetMeta = $targetMeta;
+        $this->meta = $meta;
     }
 
     public static function indent(string $string, int $times = 2): string
@@ -71,7 +65,7 @@ class Grammar
 
     public function isLivewire(): bool
     {
-        return Arr::get($this->targetMeta, 'isLivewire') === true;
+        return $this->attributes->hasAttribute('wire:model');
     }
 
     public static function for(array $command)
@@ -82,18 +76,22 @@ class Grammar
             'fill' => Fill::class,
         ];
 
+
         return new $types[$command['action']](
-            $command['path'],
-            $command['target'],
-            $command['options'],
-            $command['classList'],
+            $command['attributes'],
+            $command['parent'],
             $command['tag'],
-            $command['targetMeta'] ?? null
+            $command['meta']
         );
     }
 
     public function pause()
     {
         return null;
+    }
+
+    public function parseAttributes(array $attributes)
+    {
+        return  array_map(fn ($element) => new Attribute(...array_values($element)), $attributes);
     }
 }

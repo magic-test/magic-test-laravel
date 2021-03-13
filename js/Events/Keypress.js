@@ -32,9 +32,6 @@ export default function keypress(event) {
         tag: event.target.parent?.tagName.toLowerCase() || null
     };
 
-    console.log(parsedAttributes);
-
-
     let text = (event.target.value + charStr).trim().replace("'", "\\'");    
 
     let finalObject = {
@@ -48,10 +45,8 @@ export default function keypress(event) {
     };
 
     const isSame = (firstObject, secondObject) => {
-        let sameAttributes = (firstObject.attributes.length === secondObject.attributes.length) &&
-                    firstObject.attributes.every((element, index) => JSON.stringify(element) == JSON.stringify(secondObject.attributes[index]));;
-
-        return firstObject.tag == secondObject.tag && sameAttributes;
+        return firstObject.tag == secondObject.tag &&
+            JSON.stringify(firstObject.attributes) === JSON.stringify(secondObject.attributes);
     };
 
     var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));

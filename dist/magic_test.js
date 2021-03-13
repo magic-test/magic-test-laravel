@@ -183,7 +183,6 @@ function keypress(event) {
   var parent = {
     tag: ((_event$target$parent = event.target.parent) === null || _event$target$parent === void 0 ? void 0 : _event$target$parent.tagName.toLowerCase()) || null
   };
-  console.log(parsedAttributes);
   var text = (event.target.value + charStr).trim().replace("'", "\\'");
   var finalObject = {
     action: 'fill',
@@ -196,11 +195,7 @@ function keypress(event) {
   };
 
   var isSame = function isSame(firstObject, secondObject) {
-    var sameAttributes = firstObject.attributes.length === secondObject.attributes.length && firstObject.attributes.every(function (element, index) {
-      return JSON.stringify(element) == JSON.stringify(secondObject.attributes[index]);
-    });
-    ;
-    return firstObject.tag == secondObject.tag && sameAttributes;
+    return firstObject.tag == secondObject.tag && JSON.stringify(firstObject.attributes) === JSON.stringify(secondObject.attributes);
   };
 
   var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));

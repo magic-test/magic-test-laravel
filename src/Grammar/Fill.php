@@ -14,8 +14,8 @@ class Fill extends Grammar
     public function arguments()
     {
         return [
-            new String_(trim($this->target, "'")),
-            new String_(trim($this->options['text'], "'")),
+            new String_($this->selector()),
+            new String_($this->meta['text']),
         ];
     }
 
@@ -24,5 +24,13 @@ class Fill extends Grammar
         if ($this->isLivewire()) {
             return new Pause(200);
         }
+    }
+
+    public function selector(): string
+    {
+        $attribute = $this->attributes->filter->isUnique()->first() ??
+                    $this->attributes->first();
+        
+        return $attribute->buildSelector();
     }
 }
