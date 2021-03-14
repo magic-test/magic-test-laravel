@@ -20,11 +20,11 @@ export default function click(event) {
         if (!target) {
             return;
         }
-        meta.label = target.trim().replace("'", "\\'");
+        meta.label = target.trim();
     } else if (tagName == 'SELECT') {
         var target = event.currentTarget.name;
 
-        meta.label = target.trim().replace("'", "\\'");
+        meta.label = target.trim();
 
     } else if (tagName == "INPUT") {
         let ignoreType = [

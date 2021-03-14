@@ -137,10 +137,10 @@ function click(event) {
       return;
     }
 
-    meta.label = target.trim().replace("'", "\\'");
+    meta.label = target.trim();
   } else if (tagName == 'SELECT') {
     var target = event.currentTarget.name;
-    meta.label = target.trim().replace("'", "\\'");
+    meta.label = target.trim();
   } else if (tagName == "INPUT") {
     var ignoreType = ["text", "password", "date", "email", "month", "number", "search"];
 

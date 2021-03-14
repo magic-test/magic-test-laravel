@@ -19,7 +19,7 @@ export default function keypress(event) {
         tag: event.target.parent?.tagName.toLowerCase() || null
     };
 
-    let text = (event.target.value + charStr).trim().replace("'", "\\'");    
+    let text = (event.target.value + charStr).trim();    
 
     let finalObject = {
         action: 'fill',

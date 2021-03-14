@@ -11,7 +11,6 @@ export function enableKeyboardShortcuts() {
     function generateAssertion() {
         let text = selectedText();
         if (text.trim().length > 0) {
-            text = text.replace("'", "\\\'");
             MagicTest.addData({
                 action: 'see',
                 attributes: [],
