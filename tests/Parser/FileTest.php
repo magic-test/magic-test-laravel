@@ -20,7 +20,7 @@ class FileTest extends TestCase
     {
         $this->expectException(InvalidFileException::class);
 
-        $fixture = file_get_contents(__DIR__ . './../fixtures/Errors/MissingMethod.php');
+        $fixture = file_get_contents(__DIR__ . '/../fixtures/Errors/MissingMethod.php');
 
         new File($fixture, 'testBasicExample');
     }
@@ -30,7 +30,7 @@ class FileTest extends TestCase
     {
         $this->expectException(InvalidFileException::class);
 
-        $fixture = file_get_contents(__DIR__ . './../fixtures/Errors/MissingMethodCall.php');
+        $fixture = file_get_contents(__DIR__ . '/../fixtures/Errors/MissingMethodCall.php');
 
         new File($fixture, 'testBasicExample');
     }
@@ -40,7 +40,7 @@ class FileTest extends TestCase
     {
         $this->expectException(InvalidFileException::class);
 
-        $fixture = file_get_contents(__DIR__ . './../fixtures/Errors/MissingClosure.php');
+        $fixture = file_get_contents(__DIR__ . '/../fixtures/Errors/MissingClosure.php');
 
         new File($fixture, 'testBasicExample');
     }
