@@ -2,6 +2,8 @@
 
 namespace MagicTest\MagicTest\Grammar;
 
+use PhpParser\Node\Scalar\String_;
+
 class See extends Grammar
 {
     public function action(): string
@@ -12,5 +14,20 @@ class See extends Grammar
         $target = "'" . $target . "'";
 
         return "->assertSee({$target})";
+    }
+
+    public function nameForParser()
+    {
+        return 'assertSee';
+    }
+
+    public function arguments()
+    {
+        $target = trim($this->target, "'");
+        $target = trim($target);
+
+        return [
+            new String_($target),
+        ];
     }
 }

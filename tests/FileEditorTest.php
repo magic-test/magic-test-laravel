@@ -12,8 +12,8 @@ class FileEditorTest extends TestCase
     /** @test */
     public function it_properly_replaces_the_method_content_when_it_does_not_have_actions()
     {
-        $expectedInput = file_get_contents(__DIR__ . '/fixtures/ExampleTest.example');
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestOutput.example');
+        $expectedInput = file_get_contents(__DIR__ . '/fixtures/Regular/input.php');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/Regular/output.php');
         
 
         $grammar = collect([
@@ -28,27 +28,10 @@ class FileEditorTest extends TestCase
     }
 
     /** @test */
-    public function it_properly_replaces_the_content_when_it_has_actions()
-    {
-        $expectedInput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContent.example');
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentOutput.example');
-        
-
-        $grammar = collect([
-            new Click('', "'Forgot your password?'", [], [], 'a'),
-            new See('', "'Mateus'", [], [], 'span'),
-        ]);
-
-        $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
-
-        $this->assertEquals($expectedOutput, $processedText);
-    }
-
-    /** @test */
     public function it_properly_parses_a_file_that_uses_the_magic_macro()
     {
-        $expectedInput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentMacro.example');
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentMacroOutput.example');
+        $expectedInput = file_get_contents(__DIR__ . '/fixtures/WithActions/input.php');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/WithActions/output.php');
         
 
         $grammar = collect([
@@ -58,29 +41,14 @@ class FileEditorTest extends TestCase
 
         $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
 
-        $this->assertEquals($expectedOutput, $processedText);
-    }
-
-    /** @test */
-    public function it_properly_adds_new_actions_to_a_test()
-    {
-        $input = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithMacroFinishedInput.example');
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithMacroFinishedOutput.example');
-        
-
-        $grammar = collect([
-            new Click('', "'Mateus'", [], [], 'button'),
-        ]);
-
-        $processedText = (new FileEditor)->process($input, $grammar, 'testBasicExample');
         $this->assertEquals($expectedOutput, $processedText);
     }
 
     /** @test */
     public function it_properly_adds_fills_to_a_livewire_test()
     {
-        $input = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentAndLivewireInput.example');
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentAndLivewireOutput.example');
+        $input = file_get_contents(__DIR__ . '/fixtures/Livewire/input.php');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/Livewire/output.php');
 
         $grammar = collect([
             new Fill('', 'name', [
@@ -100,10 +68,21 @@ class FileEditorTest extends TestCase
     }
 
     /** @test */
-    public function it_finishes_a_test_using_the_helper()
+    public function it_finishes_a_test_using_the_macro()
     {
-        $expectedInput = file_get_contents(__DIR__ . '/fixtures/ExampleTestOutput.example');
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestFinishedOutput.example');
+        $expectedInput = file_get_contents(__DIR__ . '/fixtures/Finished/input.php');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/Finished/output.php');
+        
+        $processedText = (new FileEditor)->finish($expectedInput, 'testBasicExample');
+
+        $this->assertEquals($expectedOutput, $processedText);
+    }
+
+    /** @test */
+    public function it_properly_adds_methods_to_a_file_using_inline_code()
+    {
+        $expectedInput = file_get_contents(__DIR__ . '/fixtures/WithActionsAndInlineCode/input.php');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/WithActionsAndInlineCode/output.php');
         
 
         $grammar = collect([
@@ -111,18 +90,24 @@ class FileEditorTest extends TestCase
             new See('', "'Mateus'", [], [], 'span'),
         ]);
 
-        $processedText = (new FileEditor)->finish($expectedInput, 'testBasicExample');
+        $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
 
         $this->assertEquals($expectedOutput, $processedText);
     }
 
     /** @test */
-    public function it_finishes_a_test_using_the_macro()
+    public function it_properly_adds_content_to_a_file_with_two_closures()
     {
-        $expectedInput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentMacroOutput.example');
-        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/ExampleTestWithContentMacroFinishedOutput.example');
+        $expectedInput = file_get_contents(__DIR__ . '/fixtures/WithActionsAndTwoClosures/input.php');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/WithActionsAndTwoClosures/output.php');
         
-        $processedText = (new FileEditor)->finish($expectedInput, 'testBasicExample');
+
+        $grammar = collect([
+            new Click('', "'Forgot your password?'", [], [], 'a'),
+            new See('', "'Mateus'", [], [], 'span'),
+        ]);
+
+        $processedText = (new FileEditor)->process($expectedInput, $grammar, 'testBasicExample');
 
         $this->assertEquals($expectedOutput, $processedText);
     }

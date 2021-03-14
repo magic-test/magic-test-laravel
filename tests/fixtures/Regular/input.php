@@ -2,11 +2,8 @@
 
 namespace Tests\Browser;
 
-use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
-use MagicTest\MagicTest\MagicTest;
-use MagicTest\MagicTest\MagicTestManager;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\DuskTestCase;
 
 class ExampleTest extends DuskTestCase
 {
@@ -18,9 +15,8 @@ class ExampleTest extends DuskTestCase
     public function testBasicExample()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/');
-
-            magic_test($browser);
+            $browser->visit('/')
+                    ->magic();
         });
     }
 }

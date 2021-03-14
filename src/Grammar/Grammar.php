@@ -91,4 +91,9 @@ class Grammar
             $command['targetMeta'] ?? null
         );
     }
+
+    public function pause()
+    {
+        return null;
+    }
 }

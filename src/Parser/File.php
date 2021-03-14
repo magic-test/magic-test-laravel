@@ -3,260 +3,146 @@
 namespace MagicTest\MagicTest\Parser;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
+use MagicTest\MagicTest\Exceptions\InvalidFileException;
+use MagicTest\MagicTest\Parser\Printer\PrettyPrinter;
+use MagicTest\MagicTest\Parser\Visitors\GrammarBuilderVisitor;
+use MagicTest\MagicTest\Parser\Visitors\MagicRemoverVisitor;
+use PhpParser\Lexer;
+use PhpParser\Node;
+use PhpParser\Node\Expr\Closure;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\NodeFinder;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\CloningVisitor;
+use PhpParser\NodeVisitor\ParentConnectingVisitor;
+use PhpParser\Parser;
+use PhpParser\ParserFactory;
 
 class File
 {
-    const MACRO = '->magic()';
+    protected Parser $parser;
 
-    public string $content;
+    protected Lexer $lexer;
 
-    public string $method;
+    protected array $ast;
 
-    public Collection $lines;
+    protected array $initialStatements;
 
-    public Line $initialMethodLine;
+    protected array $newStatements;
 
-    public Line $breakpointLine;
-
-    public Line $lastActionLine;
-
-    public ?Line $testStartsAtLine;
-
-    public ?Line $currentLineInIteration;
-
-    public bool $writingTest = false;
-
-    public ?Line $lastLineAdded;
-
-    protected array $possibleMethods = ['magic_test', '->magic()'];
+    protected ?Closure $closure;
 
     public function __construct(string $content, string $method)
     {
-        $this->content = $content;
-        $this->method = $method;
-        $this->lines = $this->generateLines();
-        $this->lastLineAdded = $this->getLastAction();
+        $this->lexer = new \PhpParser\Lexer\Emulative([
+            'usedAttributes' => [
+                'comments',
+                'startLine', 'endLine',
+                'startTokenPos', 'endTokenPos',
+            ],
+        ]);
+
+        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7, $this->lexer);
+        $this->ast = (array) $this->parser->parse($content)[0];
+        $this->initialStatements = $this->ast['stmts'];
+        $this->newStatements = $this->getNewStatements();
+        $this->closure = $this->getClosure($method);
     }
 
-    public static function fromContent(string $content, string $method): self
+    public static function fromContent(string $content, string $method)
     {
         return new static($content, $method);
     }
 
-    public function getLastAction(): Line
+    public function addMethods(Collection $grammar): string
     {
-        $fullMethod = 'public function ' . $this->method;
+        $traverser = new NodeTraverser;
+        $traverser->addVisitor(new ParentConnectingVisitor);
+        $traverser->addVisitor(new GrammarBuilderVisitor($grammar));
+        $traverser->traverse($this->closure->stmts);
 
-        $this->initialMethodLine = $this->lines
-                            ->filter(fn (Line $line) => Str::contains($line, $fullMethod))
-                            ->first();
-
-
-        $this->breakpointLine = $this->lines
-                            ->skipUntil(fn (Line $line) => $line === $this->initialMethodLine)
-                            ->filter(fn (Line $line) => Str::contains($line, $this->possibleMethods))
-                            ->first();
-
-
-        $this->lastActionLine = $this->reversedLines()
-                        ->skipUntil(fn (Line $line) => $line === $this->breakpointLine)
-                        ->skip(1)
-                        ->takeUntiL(fn (Line $line) => $line === $this->initialMethodLine)
-                        ->reject(fn (Line $line) => $line->isEmpty())
-                        ->first();
-
-
-        return $this->lastActionLine;
+        return $this->print();
     }
 
-    public function isLastAction(Line $line): bool
+    public function finish(): string
     {
-        return Str::contains(trim($line), trim($this->getLastAction()));
+        $traverser = new NodeTraverser;
+        $traverser->addVisitor(new ParentConnectingVisitor);
+        $traverser->addVisitor(new MagicRemoverVisitor);
+        $traverser->traverse($this->closure->stmts);
+
+        return $this->print();
     }
 
-    public function forEachLine(callable $closure)
+    protected function print(): string
     {
-        foreach ($this->lines as $key => $line) {
-            $this->currentLineInIteration = $line;
-            $closure($line, $key);
-        }
-    }
-
-    public function testLines(): Collection
-    {
-        return $this->lines
-            ->skipUntil($this->initialMethodLine)
-            ->takeUntil($this->breakpointLine)
-            ->reject(fn (Line $line) => $line->isEmpty());
-    }
-
-    public function forEachTestLine(callable $closure)
-    {
-        foreach ($this->testLines() as $line) {
-            $closure($line);
-        }
-    }
-
-    public function addTestLine(Line $line, $final = false): void
-    {
-        $this->addContentAfterLine($this->lastLineAdded, $line, $final);
-    }
-
-    public function addTestLines($lines): void
-    {
-        collect($lines)->each(fn (Line $line, $key) => $this->addTestLine($line, $line === $lines->last()));
-    }
-
-    public function removeLine(Line $line): void
-    {
-        $this->lines = $this->lines->reject(
-            fn (Line $originalLine) =>
-             $originalLine == $line
-        );
-    }
-
-    public function addContentAfterLine(Line $referenceLine, Line $newLine, $final = false, $methodCallsOnly = false): void
-    {
-        // There is an edge case where an "assertSee" method may have more than one line.
-        // The issue is figuring out where to stop... so when the output() method is
-        // called, we pass "methodCallsOnly" as true to try and find the correct
-        // ending line of that method call, by checking if it ends on );
-        // instead of just picking the refrence line.
-        $desiredLine = $this->lines->skipUntil(function (Line $line, $key) use ($referenceLine, $newLine, $final) {
-            return $line === $referenceLine;
-        })->first(function (Line $line, $key) use ($methodCallsOnly) {
-            return $methodCallsOnly ? $line->isMethodEnding() : true;
-        });
-
-
-        $this->lines = $this->lines->map(function (Line $line, $key) use ($desiredLine, $newLine, $final) {
-            if ($line !== $desiredLine) {
-                return $line;
-            }
-            
-
-            if ($final) {
-                $newLine->final();
-            }
-
-            $return = [$line, $newLine];
-
-            $this->lastLineAdded = last($return);
-
-            return $return;
-        })->flatten();
-    }
-
-    public function startWritingTest(): void
-    {
-        $this->testStartsAtLine = $this->currentLineInIteration;
-        $this->writingTest = true;
-    }
-
-    public function stopWritingTest(): void
-    {
-        $this->writingTest = false;
-    }
-
-    public function previousLineTo(Line $line, $ignoreHelpers = true): Line
-    {
-        $lineKey = $this->reversedLines()->search($line);
-
-        return $this->reversedLines()->filter(
-            fn (Line $line, $key) =>
-            $key > $lineKey && ($ignoreHelpers ? ! $line->isHelper() : true)
-        )->first();
-    }
-
-    public function isFirstClick(Line $line): bool
-    {
-        $reversedLines = $this->reversedLines();
-
-        return $this->reversedLines()
-                    ->skipUntil(fn (Line $foundLine) => $foundLine === $line)
-                    ->skip(1)
-                    ->takeUntil(fn (Line $foundLine) => $foundLine === $this->initialMethodLine)
-                    ->filter(fn (Line $line) => $line->isClickOrPress())
-                    ->isEmpty();
-    }
-
-    public function reversedLines(): Collection
-    {
-        return $this->lines->reverse()->values();
-    }
-
-    public function freshOutput(): string
-    {
-        return $this->lines
-                ->map(fn (Line $line) => $line->__toString())
-                ->implode(PHP_EOL);
-    }
-
-    public function output(): string
-    {
-        $lines = clone $this->lines;
-
-        $this->fixBreakpoint();
-        $this->addNecessaryPausesToLines();
-        $this->removeDuplicatePauses();
-
-        return tap(
-            $this->lines
-            ->map(fn (Line $line) => $line->__toString())
-            ->implode(PHP_EOL),
-            fn () => $this->lines = $lines
+        return (new PrettyPrinter)->printFormatPreserving(
+            $this->newStatements,
+            $this->initialStatements,
+            $this->lexer->getTokens()
         );
     }
 
     /**
-     * After clicks and presses, we need to add a pause(500) call so the browsing
-     * works properly. This method iterates through all the lines and
-     * adds the pause calls where necessary.
+     * Clone the statements to leave the starting ones untouched so they can be diffed by the printer later.
      *
-     * @return void
+     * @return array
      */
-    public function addNecessaryPausesToLines(): void
+    protected function getNewStatements(): array
     {
-        $this->forEachTestLine(function ($line) {
-            $previousLine = $this->previousLineTo($line);
+        $traverser = new NodeTraverser;
+        $traverser->addVisitor(new CloningVisitor);
 
-            if ($previousLine->requiresPause()) {
-                $this->addContentAfterLine($previousLine, Line::pause(), false, true);
-            }
-        });
+        return $traverser->traverse($this->initialStatements);
     }
 
-    public function removeDuplicatePauses(): void
+    protected function getClassMethod(string $method): ?ClassMethod
     {
-        $this->forEachTestLine(function ($line) {
-            $previousLine = $this->previousLineTo($line);
+        return (new NodeFinder)->findFirst(
+            $this->newStatements,
+            fn (Node $node) => $node instanceof ClassMethod && $node->name->__toString() === $method
+        );
+    }
 
-            if ($previousLine->isPause() && $line->isPause()) {
-                $this->removeLine($line);
-            }
+    /**
+     * Finds the first valid method call inside a class method.
+     * A valid method call is one that is both a MethodCall instance and
+     * that also has a node that is a Identifier and ahs the name magic.
+     *
+     * @param \PhpParser\Node\Stmt\ClassMethod $classMethod
+     * @return \PhpParser\Node\Expr\MethodCall|null
+     */
+    protected function getMethodCall(ClassMethod $classMethod): ?MethodCall
+    {
+        return (new NodeFinder)->findFirst($classMethod->stmts, function (Node $node) {
+            return $node instanceof MethodCall &&
+            (new NodeFinder)->find(
+                $node->args,
+                fn (Node $node) => $node instanceof Identifier && $node->name === 'magic'
+            );
         });
     }
 
     /**
-     * Depending wether the user used the fluent magic() call or the magic_test helper,
-     * we need to appropriately place semicolons. If the magic helper was used, we
-     * need to remove the semicolon from the line previous to it, since it is
-     * the one-to-last call on the chain.
+     * Get the closure object
      *
-     * @return void
+     * @param string $method
+     * @throws \MagicTest\MagicTest\Exceptions\InvalidFileException
+     * @return Closure
      */
-    public function fixBreakpoint(): void
+    protected function getClosure(string $method): ?Closure
     {
-        if (optional($this->breakpointLine)->isMacroCall()) {
-            $this->previousLineTo($this->breakpointLine)->notFinal();
-        }
-    }
+        $classMethod = $this->getClassMethod($method);
+        throw_if(! $classMethod, new InvalidFileException("Could not find method {$method} on file."));
 
-    protected function generateLines(): Collection
-    {
-        $lines = explode(PHP_EOL, $this->content);
+        $methodCall = $this->getMethodCall($classMethod);
+        throw_if(! $methodCall, new InvalidFileException("Could not find the browse call on file."));
+        
+        $closure = (new NodeFinder)->findFirst($methodCall->args, fn (Node $node) => $node->value instanceof Closure);
+        throw_if(! $closure, new InvalidFileException("Could not find the closure on file."));
 
-        return  collect($lines)->mapInto(Line::class);
+        return $closure->value;
     }
 }

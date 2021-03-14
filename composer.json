@@ -16,13 +16,14 @@
     ],
     "require": {
         "php": "^7.4|^8.0",
+        "ext-json": "*",
         "illuminate/contracts": "^8.0",
         "illuminate/support": "^8.0",
         "laravel/dusk": "^6.0",
+        "nikic/php-parser": "^4.10.3",
         "psy/psysh": "^0.10.4",
         "spatie/backtrace": "^1.1",
-        "spatie/laravel-package-tools": "^1.1",
-        "ext-json": "*"
+        "spatie/laravel-package-tools": "^1.1"
     },
     "require-dev": {
         "orchestra/testbench": "^6.0",
@@ -34,18 +35,12 @@
         "psr-4": {
             "MagicTest\\MagicTest\\": "src",
             "MagicTest\\MagicTest\\Database\\Factories\\": "database/factories"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
             "MagicTest\\MagicTest\\Tests\\": "tests"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
+        }
     },
     "scripts": {
         "psalm": "vendor/bin/psalm",
