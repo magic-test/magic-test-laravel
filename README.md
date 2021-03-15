@@ -19,7 +19,7 @@ Laravel Magic Test was created by [Mateus Guimarães](https://twitter.com/mateus
 You can install the package via composer:
 
 ```bash
-composer require magic-test/magic-test-laravel
+composer require magic-test/magic-test-laravel --dev
 ```
 
 Then, add the following line to your `$middleware` array under `app/Http/Kernel.php`:   
