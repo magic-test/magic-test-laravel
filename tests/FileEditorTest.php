@@ -113,4 +113,28 @@ class FileEditorTest extends TestCase
 
         $this->assertEquals($expectedOutput, $processedText);
     }
+
+    /** @test */
+    public function it_properly_escapes_a_string()
+    {
+        $input = file_get_contents(__DIR__ . '/fixtures/NeedsEscaping/input.php');
+        $expectedOutput = file_get_contents(__DIR__ . '/fixtures/NeedsEscaping/output.php');
+
+        $grammar = collect([
+            new Click([
+                [
+                    'name' => 'name',
+                    'value' => 'foo',
+                ],
+            ], [], 'button', [
+                'label' => "Let's go!",
+            ]),
+            new See([], [], 'span', [
+                'text' => "Let's do it!",
+            ]),
+        ]);
+
+        $processedText = (new FileEditor)->process($input, $grammar, 'testBasicExample');
+        $this->assertEquals($expectedOutput, $processedText);
+    }
 }

@@ -75,7 +75,6 @@ function enableKeyboardShortcuts() {
     var text = selectedText();
 
     if (text.trim().length > 0) {
-      text = text.replace("'", "\\\'");
       MagicTest.addData({
         action: 'see',
         attributes: [],
@@ -215,7 +214,7 @@ function keypress(event) {
   var parent = {
     tag: ((_event$target$parent = event.target.parent) === null || _event$target$parent === void 0 ? void 0 : _event$target$parent.tagName.toLowerCase()) || null
   };
-  var text = (event.target.value + charStr).trim().replace("'", "\\'");
+  var text = (event.target.value + charStr).trim();
   var finalObject = {
     action: 'fill',
     attributes: parsedAttributes,
