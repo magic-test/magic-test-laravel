@@ -127,7 +127,6 @@ function click(event) {
   };
   var attributes = event.currentTarget.attributes;
   var parent = event.currentTarget.parentElement;
-  var parsedAttributes = (0,_AttributeParser__WEBPACK_IMPORTED_MODULE_1__.default)(attributes, tagName.toLowerCase());
 
   if (tagName == "BUTTON" || tagName == "A" || tagName == "INPUT" && event.currentTarget.type == "submit") {
     var target = event.currentTarget.value || event.currentTarget.text || event.currentTarget.innerText;
@@ -138,8 +137,8 @@ function click(event) {
 
     meta.label = target.trim();
   } else if (tagName == 'SELECT') {
-    var target = event.currentTarget.name;
-    meta.label = target.trim();
+    var _target = event.currentTarget.name;
+    meta.label = _target.trim();
   } else if (tagName == "INPUT") {
     var ignoreType = ["text", "password", "date", "email", "month", "number", "search"];
 
@@ -150,7 +149,10 @@ function click(event) {
     meta.label = event.currentTarget.name;
   } else {
     return;
-  }
+  } // We only want to call it here because we do not want to call it with a div or anything that should be rejected on the block above.
+
+
+  var parsedAttributes = (0,_AttributeParser__WEBPACK_IMPORTED_MODULE_1__.default)(attributes, tagName.toLowerCase());
 
   if (tagName === 'SELECT') {
     meta.label = event.currentTarget.value;

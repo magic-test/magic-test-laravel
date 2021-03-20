@@ -3,26 +3,25 @@ import AttributeParser from './../AttributeParser';
 import { isSameArray } from '../Helpers';
 
 export default function click(event) {
-    var tagName = event.currentTarget.tagName;
-    var meta = {
+    let tagName = event.currentTarget.tagName;
+    let meta = {
         type: event.target.type || null
     };
     let attributes = event.currentTarget.attributes;
     let parent = event.currentTarget.parentElement;
-    const parsedAttributes = AttributeParser(attributes, tagName.toLowerCase());
 
     if (
         tagName == "BUTTON" ||
         tagName == "A" ||
         (tagName == "INPUT" && event.currentTarget.type == "submit")
     ) {
-        var target = event.currentTarget.value || event.currentTarget.text || event.currentTarget.innerText;
+        let target = event.currentTarget.value || event.currentTarget.text || event.currentTarget.innerText;
         if (!target) {
             return;
         }
         meta.label = target.trim();
     } else if (tagName == 'SELECT') {
-        var target = event.currentTarget.name;
+        let target = event.currentTarget.name;
 
         meta.label = target.trim();
 
@@ -45,11 +44,14 @@ export default function click(event) {
         return;
     }
 
+    // We only want to call it here because we do not want to call it with a div or anything that should be rejected on the block above.
+    const parsedAttributes = AttributeParser(attributes, tagName.toLowerCase());
+
     if (tagName === 'SELECT') {
         meta.label = event.currentTarget.value;
 
-        var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
-        var lastAction = testingOutput[testingOutput.length - 1];
+        let testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
+        let lastAction = testingOutput[testingOutput.length - 1];
 
         // In case the latest action was the same select, we don't want to add a new one,
         // just change the target meta on the previous one.
@@ -76,8 +78,6 @@ export default function click(event) {
         tag: tagName.toLowerCase(),
         meta: meta
     };
-
-
 
     MagicTest.addData(finalObject);
 }

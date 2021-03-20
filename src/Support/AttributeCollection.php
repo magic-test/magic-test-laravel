@@ -6,6 +6,8 @@ use Illuminate\Support\Collection;
 
 class AttributeCollection extends Collection
 {
+    protected array $attributeOrder = ['dusk', 'name'];
+
     public function hasAttribute(string $name): bool
     {
         return $this->where('name', $name)->isNotEmpty();
@@ -23,14 +25,18 @@ class AttributeCollection extends Collection
      */
     public function reorderItems(): self
     {
-        if ($this->hasAttribute('name')) {
-            $name = $this->where('name', 'name')->first();
-            $items = $this->where('name', '!=', 'name');
-            $items->prepend($name);
+        $newCollection = new static;
 
-            return $items;
+        foreach ($this->attributeOrder as $attribute) {
+            if ($this->hasAttribute($attribute)) {
+                $newCollection->push(
+                    $this->where('name', $attribute)->first()
+                );
+            }
         }
 
-        return $this;
+        return $newCollection->merge(
+            $this->whereNotIn('name', $this->attributeOrder)
+        );
     }
 }
