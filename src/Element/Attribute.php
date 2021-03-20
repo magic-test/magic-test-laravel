@@ -25,6 +25,7 @@ class Attribute
     public function buildSelector($element = 'input', $forceInputSyntax = false): string
     {
         return [
+            'dusk' => "@{$this->value}",
             'name' => $forceInputSyntax ? $this->buildFullSelector($element) : $this->value,
             'id' => $forceInputSyntax ? $this->buildFullSelector($element) : "#{$this->value}",
         ][$this->name] ?? $this->buildFullSelector($element);

@@ -19,7 +19,7 @@ class AttributeCollection extends Collection
     }
 
     /**
-     * The "name" attribute should always be the priority.
+     * The "dusk" and "name" attributes should always be the priority.
      *
      * @return self
      */
