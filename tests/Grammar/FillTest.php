@@ -94,7 +94,7 @@ class FillTest extends TestCase
 
         $this->assertEquals('type', $fill->nameForParser());
         $this->assertEquals([
-            new String_('input[wire:model=userEmail]'),
+            new String_('input[wire\:model=userEmail]'),
             new String_('myemail@gmail.com'),
         ], $fill->arguments());
         $this->assertEquals(new Pause(200), $fill->pause());
