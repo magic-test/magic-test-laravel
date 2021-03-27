@@ -3,32 +3,27 @@
 namespace MagicTest\MagicTest\Grammar;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+use MagicTest\MagicTest\Element\Attribute;
+use MagicTest\MagicTest\Support\AttributeCollection;
 
 class Grammar
 {
-    public $path;
-
-    public $target;
-
-    public $options;
-
-    public $classList;
-
-    public $tag;
-
-    public $targetMeta;
-
     const INDENT = '    ';
+    
+    public AttributeCollection $attributes;
 
-    public function __construct($path, $target, $options, $classList, $tag, $targetMeta = null)
+    public array $parent;
+
+    public ?string $tag;
+
+    public array $meta;
+
+    public function __construct($attributes, $parent, $tag, $meta)
     {
-        $this->path = $path;
-        $this->target = $this->clean($target);
-        $this->options = $options;
-        $this->classList = $classList;
+        $this->attributes = (new AttributeCollection($this->parseAttributes($attributes)))->reorderItems();
+        $this->parent = $parent;
         $this->tag = $tag;
-        $this->targetMeta = $targetMeta;
+        $this->meta = $meta;
     }
 
     public static function indent(string $string, int $times = 2): string
@@ -41,37 +36,9 @@ class Grammar
         return $indentation . $string;
     }
 
-    public function build(bool $last = false)
-    {
-        return self::indent($this->action(), 4) . ($last ? ';' : '');
-    }
-
-    public function clean(string $string)
-    {
-        if (! Str::startsWith($string, "'")) {
-            $string = "'" . $string;
-        }
-
-        if (! Str::endsWith($string, "'")) {
-            $string .= "'";
-        }
-        
-        return trim($string);
-    }
-
-    public function trim(string $property): string
-    {
-        return trim($this->{$property});
-    }
-
-    public function hasTargetType(string $type): bool
-    {
-        return Arr::get($this->targetMeta, 'type') === $type;
-    }
-
     public function isLivewire(): bool
     {
-        return Arr::get($this->targetMeta, 'isLivewire') === true;
+        return $this->attributes->hasAttribute('wire:model');
     }
 
     public static function for(array $command)
@@ -81,19 +48,28 @@ class Grammar
             'see' => See::class,
             'fill' => Fill::class,
         ];
+        logger(json_encode($command));
 
         return new $types[$command['action']](
-            $command['path'],
-            $command['target'],
-            $command['options'],
-            $command['classList'],
+            $command['attributes'],
+            $command['parent'],
             $command['tag'],
-            $command['targetMeta'] ?? null
+            $command['meta']
         );
     }
 
     public function pause()
     {
         return null;
+    }
+
+    public function parseAttributes(array $attributes)
+    {
+        return  array_map(fn ($element) => new Attribute(...array_values($element)), $attributes);
+    }
+
+    public function getMeta(string $property)
+    {
+        return Arr::get($this->meta, $property);
     }
 }

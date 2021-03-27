@@ -1,6 +1,55 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./js/AttributeParser.js":
+/*!*******************************!*\
+  !*** ./js/AttributeParser.js ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AttributeParser)
+/* harmony export */ });
+function AttributeParser(attributes) {
+  var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'input';
+
+  if (element === 'form') {
+    return;
+  }
+
+  var isUnique = function isUnique(attribute) {
+    if (attribute.name == 'class') {
+      return document.getElementsByClassName(attribute.value).length === 1;
+    }
+
+    var attributeName = attribute.name;
+
+    if (attributeName.includes(':')) {
+      var split = attribute.name.split(':');
+      attributeName = "".concat(split[0], "\\:").concat(split[1]);
+    }
+
+    var selector = "".concat(element, "[").concat(attributeName, "=").concat(attribute.value, "]");
+
+    try {
+      return document.querySelectorAll(selector).length === 1;
+    } catch (e) {}
+  };
+
+  var parsedAttributes = Array.from(attributes).map(function (attribute) {
+    return {
+      name: attribute.name,
+      value: attribute.value,
+      isUnique: isUnique(attribute)
+    };
+  });
+  return parsedAttributes;
+}
+
+/***/ }),
+
 /***/ "./js/Context.js":
 /*!***********************!*\
   !*** ./js/Context.js ***!
@@ -26,19 +75,16 @@ function enableKeyboardShortcuts() {
     var text = selectedText();
 
     if (text.trim().length > 0) {
-      var action = "see";
-      var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
-      var target = "'".concat(text.replace("'", "\\\'"), "'");
-      var options = "";
       MagicTest.addData({
-        action: action,
-        path: '',
-        target: target,
-        options: options,
-        classList: [],
-        tag: ''
+        action: 'see',
+        attributes: [],
+        parent: [],
+        tag: null,
+        meta: {
+          text: text
+        }
       });
-      alert("Generated an assertion for \"" + selectedText() + "\". Type `ok()` in the debugger console to add it to your test file.");
+      alert("Generated an assertion for \"" + selectedText() + "\". Type `ok` in the debugger console to add it to your test file.");
     }
   }
 
@@ -69,32 +115,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ click)
 /* harmony export */ });
 /* harmony import */ var _Finders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../Finders */ "./js/Finders.js");
+/* harmony import */ var _AttributeParser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../AttributeParser */ "./js/AttributeParser.js");
+/* harmony import */ var _Helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Helpers */ "./js/Helpers.js");
+
+
 
 function click(event) {
-  console.log(event);
   var tagName = event.currentTarget.tagName;
-  var classList = event.currentTarget.classList;
-  var action = "";
-  var target = "";
-  var options = "";
-  var path = '';
-  var targetMeta = {
+  var meta = {
     type: event.target.type || null
   };
+  var attributes = event.currentTarget.attributes;
+  var parent = event.currentTarget.parentElement;
 
   if (tagName == "BUTTON" || tagName == "A" || tagName == "INPUT" && event.currentTarget.type == "submit") {
-    action = "click";
     var target = event.currentTarget.value || event.currentTarget.text || event.currentTarget.innerText;
 
     if (!target) {
       return;
     }
 
-    target = "'" + target.trim().replace("'", "\\'") + "'";
+    meta.label = target.trim();
   } else if (tagName == 'SELECT') {
-    action = "click";
-    var target = event.currentTarget.name;
-    target = "'" + target.trim().replace("'", "\\'") + "'";
+    var _target = event.currentTarget.name;
+    meta.label = _target.trim();
   } else if (tagName == "INPUT") {
     var ignoreType = ["text", "password", "date", "email", "month", "number", "search"];
 
@@ -102,21 +146,22 @@ function click(event) {
       return;
     }
 
-    var path = (0,_Finders__WEBPACK_IMPORTED_MODULE_0__.getPathTo)(event.currentTarget);
-    target = event.currentTarget.name;
-    action = "click";
+    meta.label = event.currentTarget.name;
   } else {
     return;
-  }
+  } // We only want to call it here because we do not want to call it with a div or anything that should be rejected on the block above.
+
+
+  var parsedAttributes = (0,_AttributeParser__WEBPACK_IMPORTED_MODULE_1__.default)(attributes, tagName.toLowerCase());
 
   if (tagName === 'SELECT') {
-    targetMeta.label = event.currentTarget.value;
+    meta.label = event.currentTarget.value;
     var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
     var lastAction = testingOutput[testingOutput.length - 1]; // In case the latest action was the same select, we don't want to add a new one,
     // just change the target meta on the previous one.
 
-    if (lastAction && lastAction.tag == tagName.toLowerCase() && lastAction.target == target) {
-      lastAction.targetMeta = targetMeta;
+    if (lastAction && lastAction.tag == tagName.toLowerCase() && (0,_Helpers__WEBPACK_IMPORTED_MODULE_2__.isSameArray)(lastAction.attributes, parsedAttributes)) {
+      lastAction.meta = meta;
       sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
       return;
     }
@@ -126,19 +171,18 @@ function click(event) {
     var label = (_event$target$labels = event.target.labels) === null || _event$target$labels === void 0 ? void 0 : _event$target$labels[0];
 
     if (label) {
-      targetMeta.label = label.innerText;
+      meta.label = label.innerText;
     }
   }
 
-  MagicTest.addData({
-    action: action,
-    path: path,
-    target: target,
-    options: options,
-    classList: classList,
+  var finalObject = {
+    action: 'click',
+    attributes: parsedAttributes,
+    parent: parent,
     tag: tagName.toLowerCase(),
-    targetMeta: targetMeta
-  });
+    meta: meta
+  };
+  MagicTest.addData(finalObject);
 }
 
 /***/ }),
@@ -154,48 +198,46 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ keypress)
 /* harmony export */ });
+/* harmony import */ var _AttributeParser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../AttributeParser */ "./js/AttributeParser.js");
+/* harmony import */ var _Helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../Helpers */ "./js/Helpers.js");
+
+
 function keypress(event) {
-  console.log(event);
+  var _event$target$parent;
+
   event = event || window.event;
+  console.log(event);
+  var tagName = event.target.tagName.toLowerCase();
   var charCode = event.keyCode || event.which;
-  var name = event.target.name;
-  var tagName = '';
-  var classList = '';
   var charStr = String.fromCharCode(charCode);
-  var attributes = event.target.attributes; // console.log(attributes, Object.values(attributes));
+  var attributes = event.target.attributes; // let isLivewire = Array.from(attributes).filter((attribute) => attribute.nodeName.includes('wire:')).length > 0;
 
-  var isLivewire = Array.from(attributes).filter(function (attribute) {
-    return attribute.nodeName.includes('wire:');
-  }).length > 0;
-
-  if (!event.target.labels) {
-    return;
-  }
-
-  var label = event.target.labels[0].textContent;
-  var text = (event.target.value + charStr).trim().replace("'", "\\'");
-  var target = event.target.labels[0].textContent;
-  var options = {
-    "text": "'".concat(text, "'")
+  var parsedAttributes = (0,_AttributeParser__WEBPACK_IMPORTED_MODULE_0__.default)(attributes);
+  var parent = {
+    tag: ((_event$target$parent = event.target.parent) === null || _event$target$parent === void 0 ? void 0 : _event$target$parent.tagName.toLowerCase()) || null
   };
-  var action = 'fill';
+  var text = (event.target.value + charStr).trim();
+  var finalObject = {
+    action: 'fill',
+    attributes: parsedAttributes,
+    parent: parent,
+    tag: tagName,
+    meta: {
+      text: text
+    }
+  };
+
+  var isSame = function isSame(firstObject, secondObject) {
+    return firstObject.tag == secondObject.tag && (0,_Helpers__WEBPACK_IMPORTED_MODULE_1__.isSameArray)(firstObject.attributes, secondObject.attributes);
+  };
+
   var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
   var lastAction = testingOutput[testingOutput.length - 1];
 
-  if (lastAction && lastAction.action == action && lastAction.target == "'" + name + "'") {
-    lastAction.options = options;
+  if (lastAction && isSame(lastAction, finalObject)) {
+    lastAction.meta = finalObject.meta;
   } else {
-    testingOutput.push({
-      action: action,
-      path: '',
-      target: "'".concat(name, "'"),
-      options: options,
-      classList: classList,
-      tag: tagName.toLowerCase(),
-      targetMeta: {
-        isLivewire: isLivewire
-      }
-    });
+    testingOutput.push(finalObject);
   }
 
   sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
@@ -269,6 +311,23 @@ function finderForElement(element) {
 
 
   return "find(:xpath, '".concat(getPathTo(element), "')");
+}
+
+/***/ }),
+
+/***/ "./js/Helpers.js":
+/*!***********************!*\
+  !*** ./js/Helpers.js ***!
+  \***********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "isSameArray": () => (/* binding */ isSameArray)
+/* harmony export */ });
+function isSameArray(first, second) {
+  return JSON.stringify(first) === JSON.stringify(second);
 }
 
 /***/ }),

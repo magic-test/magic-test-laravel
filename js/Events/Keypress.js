@@ -1,44 +1,48 @@
+import AttributeParser from './../AttributeParser';
+import { isSameArray } from './../Helpers';
+
 export default function keypress(event) {
-    console.log(event);
     event = event || window.event;
-    var charCode = event.keyCode || event.which;
-    var name = event.target.name;
-    var tagName = '';
-    var classList = '';
-    var charStr = String.fromCharCode(charCode);
+    console.log(event);
+    let tagName = event.target.tagName.toLowerCase();
+    let charCode = event.keyCode || event.which;
+    let charStr = String.fromCharCode(charCode);
     let attributes = event.target.attributes;
 
-    // console.log(attributes, Object.values(attributes));
-    let isLivewire = Array.from(attributes).filter((attribute) => attribute.nodeName.includes('wire:')).length > 0;
 
-    if (!event.target.labels) {
-        return;
-    }
-    var label = event.target.labels[0].textContent;
-    var text = (event.target.value + charStr).trim().replace("'", "\\'");
-    var target = event.target.labels[0].textContent;
-    var options = {"text": `'${text}'` };
-    var action = 'fill';
+    // let isLivewire = Array.from(attributes).filter((attribute) => attribute.nodeName.includes('wire:')).length > 0;
+
+
+    const parsedAttributes = AttributeParser(attributes);
+
+    const parent = {
+        tag: event.target.parent?.tagName.toLowerCase() || null
+    };
+
+    let text = (event.target.value + charStr).trim();    
+
+    let finalObject = {
+        action: 'fill',
+        attributes: parsedAttributes,
+        parent: parent,
+        tag: tagName,
+        meta: {
+            text: text
+        }
+    };
+
+    const isSame = (firstObject, secondObject) => {
+        return firstObject.tag == secondObject.tag && isSameArray(firstObject.attributes, secondObject.attributes);
+    };
+
     var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
     var lastAction = testingOutput[testingOutput.length - 1];
-    if (
-        lastAction &&
-        lastAction.action == action &&
-        lastAction.target == "'" + name + "'"
-    ) {
-        lastAction.options = options;
+
+    if (lastAction && isSame(lastAction, finalObject)) {
+        lastAction.meta = finalObject.meta;
     } else {
-        testingOutput.push({
-            action: action,
-            path: '',
-            target: `'${name}'`,
-            options: options,
-            classList: classList,
-            tag: tagName.toLowerCase(),
-            targetMeta: {
-                isLivewire: isLivewire
-            }
-        });
+        testingOutput.push(finalObject);
     }
+
     sessionStorage.setItem("testingOutput", JSON.stringify(testingOutput));
 }
