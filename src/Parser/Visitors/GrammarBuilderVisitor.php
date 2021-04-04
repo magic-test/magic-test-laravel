@@ -36,7 +36,6 @@ class GrammarBuilderVisitor extends NodeVisitorAbstract
         // right now we are in the "magic" call node, so we remove it.
         // That happens unless the second to last grammar is a Livewire field.
         // In that case we have to add an extra pause regardless.
-        $lastGrammar = $grammar->last();
         $secondToLastGrammar = $grammar->count() > 1 ? $grammar[$grammar->count() - 2] : null;
         if (
             $grammar->last() instanceof Pause &&
