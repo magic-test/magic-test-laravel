@@ -8,7 +8,7 @@ use PhpParser\NodeVisitorAbstract;
 
 class MagicRemoverVisitor extends NodeVisitorAbstract
 {
-    public function leaveNode(Node $node)
+    public function leaveNode(Node $node): void
     {
         if ($node instanceof MethodCall && $node->name->__toString() === 'magic') {
             $previousMethod = $this->getPreviousMethodInChain($node);

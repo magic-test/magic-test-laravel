@@ -8,6 +8,13 @@ use MagicTest\MagicTest\MagicTest;
 
 class MagicTestMiddleware
 {
+    /**
+     * Adds the Magic Test scripts to the body of the response.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
+     * @return \Illuminate\Http\Response
+     */
     public function handle(Request $request, Closure $next)
     {
         if (! app()->environment(['local', 'testing'])) {
@@ -15,7 +22,6 @@ class MagicTestMiddleware
         }
 
         $response = $next($request);
-
         $content = $response->getContent();
 
         if (mb_strpos($content, '</body>') !== false) {

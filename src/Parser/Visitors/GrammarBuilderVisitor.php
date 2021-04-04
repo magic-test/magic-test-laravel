@@ -23,6 +23,14 @@ class GrammarBuilderVisitor extends NodeVisitorAbstract
         }
     }
 
+    /**
+     * Builds the necessary methods with their arguments,
+     * properly adds pauses between them when needed
+     * and then adds the necessary nodes.
+     *
+     * @param \PhpParser\Node $node
+     * @return void
+     */
     public function buildNodes($node): void
     {
         $previousMethod = $this->getPreviousMethodInChain($node);

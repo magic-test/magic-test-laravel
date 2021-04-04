@@ -6,7 +6,7 @@ use PhpParser\Node\Scalar\String_;
 
 class Click extends Grammar
 {
-    public function nameForParser()
+    public function nameForParser(): string
     {
         if ($this->getMeta('type') === 'checkbox') {
             return 'check';
@@ -24,7 +24,7 @@ class Click extends Grammar
         ][$this->tag] ?? "click";
     }
 
-    public function arguments()
+    public function arguments(): array
     {
         if ($this->getMeta('type') === 'radio') {
             return [
@@ -43,7 +43,7 @@ class Click extends Grammar
         ];
     }
 
-    public function pause()
+    public function pause(): Pause
     {
         return new Pause(500);
     }
