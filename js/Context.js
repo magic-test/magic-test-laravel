@@ -7,7 +7,7 @@ export function enableKeyboardShortcuts() {
     }
 
     document.addEventListener('keydown', keydown, false);
-    
+
     function generateAssertion() {
         let text = selectedText();
         if (text.trim().length > 0) {
@@ -20,7 +20,7 @@ export function enableKeyboardShortcuts() {
                     text: text
                 }
             });
-            alert("Generated an assertion for \"" + selectedText() + "\". Type `ok` in the debugger console to add it to your test file.");
+            alert("Assertion generated for \"" + selectedText() + "\". \nType `ok` in the Magic Test console to add it to your test file.");
         }
     }
 

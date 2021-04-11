@@ -35,7 +35,12 @@ class MagicTestManager
         $browser->script('MagicTest.run()');
 
         $shell = new Shell(new Configuration([
-            'startupMessage' => '<info>Your Magic Test session has started!</info>',
+            'startupMessage' => '<info>***</info> Welcome to your 🧙 <fg=yellow>Magic Test</> session!'
+                . "\n<fg=yellow>*</> Make an assertion by pressing <info>Ctrl + Shift + A</info> on your browser."
+                . "\n<fg=yellow>*</> Type <info>ok</info> to magically write it to your test file."
+                . "\n  (make as many assertions as you wish)"
+                . "\n<fg=yellow>*</> Type <info>finish</info> to finalize and save your test file."
+                . "\n<fg=yellow>*</> Type <info>exit</info> to leave.",
         ]));
 
         $shell->addCommands([
@@ -60,7 +65,7 @@ class MagicTestManager
 
         $browser->script('MagicTest.clear()');
 
-        return $grammar->count() . " new " . Str::plural('action', $grammar->count()) . ($grammar->count() > 1 ? ' were' : ' was') . " added to ". MagicTest::$file . "::" . MagicTest::$method;
+        return '🧙 <fg=yellow>' . $grammar->count() . '</> new ' . Str::plural('action', $grammar->count()) . ($grammar->count() > 1 ? ' were' : ' was') . ' added to <fg=yellow>' . MagicTest::$file . '</><fg=white>::' . MagicTest::$method . '</>';
     }
 
     public function finish(): string
@@ -73,14 +78,14 @@ class MagicTestManager
             (new FileEditor)->finish($content, $method)
         );
 
-        return 'Your Magic Test session has finished. See you later!';
+        return 'Your 🧙 <fg=yellow>Magic Test</> session has finished. See you later! 👋 ';
     }
 
     public function buildTest(Collection $grammar): void
     {
         $content = file_get_contents(MagicTest::$file);
         $method = MagicTest::$method;
-        
+
         file_put_contents(
             MagicTest::$file,
             (new FileEditor)->process($content, $grammar, $method)
