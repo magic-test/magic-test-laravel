@@ -35,12 +35,17 @@ class MagicTestManager
         $browser->script('MagicTest.run()');
 
         $shell = new Shell(new Configuration([
-            'startupMessage' => '<info>***</info> Welcome to your 🧙 <fg=yellow>Magic Test</> session!'
-                . "\n<fg=yellow>*</> Make an assertion by pressing <info>Ctrl + Shift + A</info> on your browser."
-                . "\n<fg=yellow>*</> Type <info>ok</info> to magically write it to your test file."
-                . "\n  (make as many assertions as you wish)"
-                . "\n<fg=yellow>*</> Type <info>finish</info> to finalize and save your test file."
-                . "\n<fg=yellow>*</> Type <info>exit</info> to leave.",
+            'startupMessage' =>
+            "\n"
+            . '<info>***</info> Welcome to your 🧙 <fg=yellow>Magic Test</> session! <info>***</info>'
+            . "\n"
+            . "\n<fg=yellow>*</> To make a assertion press <info>Ctrl + Shift + A</info> on your browser."
+            . "\n<fg=yellow>*</> Type <info>ok</info> to magically write it to your test file."
+            . "\n  (make as many assertions as you wish)"
+            . "\n<fg=yellow>*</> Type <info>finish</info> to finalize and save your test file."
+            . "\n<fg=yellow>*</> Type <info>exit</info> to leave."
+            . "\n"
+            . "\n<fg=yellow>💡 Tip:</> Do not close your browser window before finalizing this session here.",
         ]));
 
         $shell->addCommands([
