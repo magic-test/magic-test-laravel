@@ -12,7 +12,7 @@ class MagicTestCommand extends Command
 
     public function handle()
     {
-        $this->comment('Your Magic Test session is starting...');
+        $this->line('<info>***</info> Starting a 🧙 <fg=yellow>Magic Test</> session...');
 
         $filter = $this->option('filter') ? (' --filter ' . $this->option('filter')) : '';
         shell_exec('php artisan dusk --browse' . $filter);
