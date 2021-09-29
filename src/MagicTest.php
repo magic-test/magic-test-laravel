@@ -35,7 +35,7 @@ class MagicTest
         $html = ['<!-- Magic Test Scripts -->'];
         // JavaScript assets.
         $html[] = '<script>';
-        $html[] = config('app.debug') ? $script : self::minify($scripts);
+        $html[] = config('app.debug') ? $script : self::minify($script);
         $html[] = '</script>';
 
         return implode("\n", $html);
