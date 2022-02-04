@@ -21,7 +21,7 @@
         "illuminate/support": "^8.0",
         "laravel/dusk": "^6.0",
         "nikic/php-parser": "^4.10.3",
-        "psy/psysh": "^0.10.4",
+        "psy/psysh": "^0.11.1",
         "spatie/backtrace": "^1.1",
         "spatie/laravel-package-tools": "^1.1"
     },
