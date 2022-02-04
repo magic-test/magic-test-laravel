@@ -12,7 +12,7 @@
     "devDependencies": {
         "autoprefixer": "^10.1.0",
         "laravel-mix": "^6.0.6",
-        "postcss": "^8.2.6"
+        "postcss": "^8.2.13"
     },
     "dependencies": {
         "jquery": "^3.6.0"
