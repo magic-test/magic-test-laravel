@@ -19,7 +19,7 @@
         "ext-json": "*",
         "illuminate/contracts": "^8.0|^9.0",
         "illuminate/support": "^8.0|^9.0",
-        "laravel/dusk": "^6.0",
+        "laravel/dusk": "^6.0|^7.0",
         "nikic/php-parser": "^4.10.3",
         "psy/psysh": "^0.11.1",
         "spatie/backtrace": "^1.1",
