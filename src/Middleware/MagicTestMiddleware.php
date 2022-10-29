@@ -4,6 +4,7 @@ namespace MagicTest\MagicTest\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use MagicTest\MagicTest\MagicTest;
 
 class MagicTestMiddleware
@@ -21,12 +22,18 @@ class MagicTestMiddleware
             return $next($request);
         }
 
+        /** @var \Illuminate\Http\Response $response */
         $response = $next($request);
-        $content = $response->getContent();
 
-        if (mb_strpos($content, '</body>') !== false) {
+        if (mb_strpos($response->getContent(), '</body>') !== false) {
             $scripts = MagicTest::scripts();
-            $response->setContent($content . "\n $scripts");
+
+            $responseContent = Str::replaceLast('</html>',
+                "{$scripts} \n </html>",
+                $response->getContent()
+            );
+
+            $response->setContent($responseContent);
         }
 
         return $response;
