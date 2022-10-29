@@ -4,9 +4,9 @@ namespace MagicTest\MagicTest\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use MagicTest\MagicTest\MagicTest;
+use Symfony\Component\HttpFoundation\Response;
 
 class MagicTestMiddleware
 {
@@ -29,7 +29,7 @@ class MagicTestMiddleware
         if (! $this->responseContainsClosingHtmlTag($response)) {
             return $response;
         }
-        
+
         return tap($response)->setContent(
             $this->addMagicTestScriptsToResponseContent($response->getContent())
         );
