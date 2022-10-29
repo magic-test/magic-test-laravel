@@ -29,7 +29,7 @@ class MagicTestMiddleware
         if (! $this->responseContainsClosingHtmlTag($response)) {
             return $response;
         }
-
+        
         return tap($response)->setContent(
             $this->addMagicTestScriptsToResponseContent($response->getContent())
         );
