@@ -25,7 +25,7 @@ class MagicTestServiceProvider extends PackageServiceProvider
         parent::boot();
 
         $this->app->singleton('magic-test-laravel', fn ($app) => new MagicTest);
-        
+
         $this->app['router']->pushMiddlewareToGroup('web', MagicTestMiddleware::class);
 
         Browser::macro('magic', fn () => MagicTestManager::run($this));

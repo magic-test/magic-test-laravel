@@ -3,6 +3,8 @@
 namespace MagicTest\MagicTest;
 
 use Laravel\Dusk\Browser;
+use MagicTest\MagicTest\Middleware\MagicTestMiddleware;
+use MagicTest\MagicTest\Middleware\NullMagicTestMiddleware;
 
 class MagicTest
 {
@@ -35,14 +37,14 @@ class MagicTest
         $html = ['<!-- Magic Test Scripts -->'];
         // JavaScript assets.
         $html[] = '<script>';
-        $html[] = config('app.debug') ? $script : self::minify($script);
+        $html[] = $script;
         $html[] = '</script>';
 
         return implode("\n", $html);
     }
 
-    protected static function minify(string $subject): string
+    public static function disable(): void
     {
-        return preg_replace('~(\v|\t|\s{2,})~m', '', $subject);
+        app()->bind(MagicTestMiddleware::class, NullMagicTestMiddleware::class);
     }
 }
