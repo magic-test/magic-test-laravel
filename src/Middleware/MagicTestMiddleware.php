@@ -28,7 +28,8 @@ class MagicTestMiddleware
         if (mb_strpos($response->getContent(), '</body>') !== false) {
             $scripts = MagicTest::scripts();
 
-            $responseContent = Str::replaceLast('</html>',
+            $responseContent = Str::replaceLast(
+                '</html>',
                 "{$scripts} \n </html>",
                 $response->getContent()
             );
