@@ -24,10 +24,6 @@ composer require magic-test/magic-test-laravel --dev
 
 Then, add the following line to your `$middleware` array under `app/Http/Kernel.php`:   
 
-```php
-\MagicTest\MagicTest\Middleware\MagicTestMiddleware::class
-```  
-
 ## Usage   
 On your Laravel Dusk tests, simply add `magic()` at the end of your method chain. For example:  
 
@@ -63,6 +59,26 @@ If you're satisfied with your test, you can type `finish` on the Shell and it'll
 See how it works [on this video](https://twitter.com/mateusjatenee/status/1368905554790334464)
 
 Magic Test is still in it's early days, so you might find that the output is not exactly what you wanted. In that case, [feel free to submit an issue](https://github.com/magic-test/magic-test-laravel/issues/new) and we'll try to improve it ASAP.
+
+## Known issues   
+
+Magic Test does not work well with Inertia.js assertions. If you're using Inertia in an integration test, please disable Magic Test by add the following code to your `setUp` method:   
+
+```php
+<?php
+
+use MagicTest\MagicTest\MagicTest;
+
+class MyTest extends TestCase
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        MagicTest::disable();
+    }
+}
+```
 
 ## Changelog
 
