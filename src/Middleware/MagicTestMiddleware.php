@@ -19,7 +19,7 @@ class MagicTestMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! app()->environment(['local', 'testing'])) {
+        if (! app()->environment(['local', 'testing', 'dusk'])) {
             return $next($request);
         }
 
