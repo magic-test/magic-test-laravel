@@ -14,15 +14,15 @@ Laravel Magic Test was created by [Mateus Guimarães](https://twitter.com/mateus
 
 > Magic Test is still in early development, and that includes the documentation. Any questions you have that aren't already address in the documentation should be opened as issues so they can be appropriately addressed in the documentation.
 
+> :warning: **If you are using Windows/Laragon**: This package won't work with Windows/Laragon, since this doesn't support TTY. This package DOES work with WSL.
+
 ## Installation
 
 You can install the package via composer:
 
 ```bash
 composer require magic-test/magic-test-laravel --dev
-```
-
-Then, add the following line to your `$middleware` array under `app/Http/Kernel.php`:   
+``` 
 
 ## Usage   
 On your Laravel Dusk tests, simply add `magic()` at the end of your method chain. For example:  
