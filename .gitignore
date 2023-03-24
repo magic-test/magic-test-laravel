@@ -11,3 +11,4 @@ phpunit.xml
 psalm.xml
 vendor
 node_modules
+.phpunit.cache/
